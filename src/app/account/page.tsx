@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { getSession } from "@/lib/auth";
 import { logoutAction } from "@/app/actions/auth";
 import { ChangePasswordForm } from "./change-password-form";
@@ -36,3 +36,4 @@ export default async function AccountPage() {
     </>
   );
 }
+

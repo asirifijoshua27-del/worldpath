@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { logoutAction } from "@/app/actions/auth";
 
 export function PortalNav({
@@ -41,3 +41,4 @@ export function PortalNav({
     </header>
   );
 }
+
