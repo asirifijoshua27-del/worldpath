@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import { getSiteContent, listPublishedPosts } from "@/lib/repo";
 import { SiteHeader } from "@/components/site-header";
@@ -20,7 +20,7 @@ export default function BlogIndexPage() {
 
   return (
     <>
-      <SiteHeader orgName={content.orgName} />
+      <SiteHeader orgName={content.orgName} logoUrl={content.logoUrl} />
       <main className="flex-1">
         <section className="mx-auto max-w-5xl px-6 pt-16 pb-8">
           <p className="uppercase tracking-[0.25em] text-xs text-gold-deep font-medium">Blog</p>
@@ -33,7 +33,7 @@ export default function BlogIndexPage() {
         <section className="mx-auto max-w-5xl px-6 pb-20">
           {posts.length === 0 ? (
             <p className="text-sm text-ink/50 italic border border-dashed border-line rounded-xl p-6">
-              No posts published yet — check back soon.
+              No posts published yet â€” check back soon.
             </p>
           ) : (
             <div className="grid sm:grid-cols-2 gap-8">
@@ -56,7 +56,7 @@ export default function BlogIndexPage() {
                       <h2 className="font-display text-xl mb-2">{p.title}</h2>
                       <p className="text-sm text-ink/70 leading-relaxed flex-1">{p.excerpt}</p>
                       <p className="text-xs text-ink/40 mt-4">
-                        {p.publishedAt ? new Date(p.publishedAt).toLocaleDateString() : ""} · {p.authorName}
+                        {p.publishedAt ? new Date(p.publishedAt).toLocaleDateString() : ""} Â· {p.authorName}
                       </p>
                     </div>
                   </Link>
@@ -66,7 +66,8 @@ export default function BlogIndexPage() {
           )}
         </section>
       </main>
-      <SiteFooter orgName={content.orgName} contactEmail={content.contactEmail} address={content.address} />
+      <SiteFooter orgName={content.orgName} contactEmail={content.contactEmail} contactPhone={content.contactPhone} address={content.address} />
     </>
   );
 }
+

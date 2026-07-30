@@ -1,4 +1,4 @@
-import { DatabaseSync } from "node:sqlite";
+﻿import { DatabaseSync } from "node:sqlite";
 import path from "node:path";
 import fs from "node:fs";
 import bcrypt from "bcryptjs";
@@ -148,12 +148,16 @@ function migrate(db: DatabaseSync) {
   // Columns added after the initial release go here as best-effort ALTERs
   // (existing databases won't have them; CREATE TABLE IF NOT EXISTS above
   // only helps brand-new installs). Safe to ignore "duplicate column".
-  const alters = ["ALTER TABLE site_content ADD COLUMN donateInfo TEXT NOT NULL DEFAULT ''"];
+  const alters = [
+    "ALTER TABLE site_content ADD COLUMN donateInfo TEXT NOT NULL DEFAULT ''",
+    "ALTER TABLE site_content ADD COLUMN logoUrl TEXT",
+    "ALTER TABLE site_content ADD COLUMN caretakingInfo TEXT NOT NULL DEFAULT ''",
+  ];
   for (const sql of alters) {
     try {
       db.exec(sql);
     } catch {
-      // Column already exists — fine.
+      // Column already exists â€” fine.
     }
   }
 }
@@ -164,8 +168,8 @@ function seed(db: DatabaseSync) {
   const contentRow = db.prepare("SELECT id FROM site_content WHERE id = 1").get();
   if (!contentRow) {
     db.prepare(
-      `INSERT INTO site_content (id, orgName, tagline, mission, vision, contactEmail, contactPhone, address, donateInfo)
-       VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?)`
+      `INSERT INTO site_content (id, orgName, tagline, mission, vision, contactEmail, contactPhone, address, donateInfo, caretakingInfo)
+       VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     ).run(
       "WorldPath Group",
       "Opening the world's classrooms to Ghana's brightest students.",
@@ -174,7 +178,8 @@ function seed(db: DatabaseSync) {
       "hello@worldpathgroup.org",
       "",
       "Accra, Ghana",
-      "Update this from Admin \u2192 Site content with your bank account or mobile money details."
+      "Update this from Admin \u2192 Site content with your bank account or mobile money details.",
+      "Beyond university placement, our parent foundation supports caretaking homes with food and daily necessities \u2014 because a student's wellbeing at home is part of their path to university too."
     );
   }
 
@@ -252,3 +257,4 @@ export function nextStudentCode(): string {
   }
   return `WPG-${year}-${String(next).padStart(4, "0")}`;
 }
+

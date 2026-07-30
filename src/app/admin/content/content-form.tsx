@@ -1,7 +1,8 @@
-"use client";
+﻿"use client";
 
 import { useActionState } from "react";
 import { updateSiteContentAction, type FormState } from "@/app/actions/admin";
+import { PhotoUploadField } from "@/components/photo-upload-field";
 
 export function ContentForm({
   content,
@@ -15,12 +16,19 @@ export function ContentForm({
     contactPhone: string;
     address: string;
     donateInfo: string;
+    logoUrl: string | null;
+    caretakingInfo: string;
   };
 }) {
   const [state, formAction, pending] = useActionState<FormState, FormData>(updateSiteContentAction, {});
 
   return (
     <form action={formAction} className="space-y-5 max-w-2xl">
+      <div>
+        <span className="block text-sm font-medium mb-1.5">Logo (shown in the site header)</span>
+        <PhotoUploadField existingUrl={content.logoUrl} name="logo" hiddenFieldName="existingLogoUrl" />
+      </div>
+
       <Field label="Organization name">
         <input name="orgName" defaultValue={content.orgName} required className="input" />
       </Field>
@@ -33,18 +41,33 @@ export function ContentForm({
       <Field label="Vision">
         <textarea name="vision" defaultValue={content.vision} required rows={3} className="input" />
       </Field>
+      <Field label="WorldPath Caretaking Foundation (projects, partnerships â€” shown on the homepage)">
+        <textarea
+          name="caretakingInfo"
+          defaultValue={content.caretakingInfo}
+          rows={5}
+          className="input"
+          placeholder="Describe your caretaking projects and partnerships, e.g. work with God Matters Fellowship..."
+        />
+      </Field>
       <div className="grid sm:grid-cols-2 gap-5">
         <Field label="Contact email">
           <input name="contactEmail" type="email" defaultValue={content.contactEmail} required className="input" />
         </Field>
-        <Field label="Contact phone">
-          <input name="contactPhone" defaultValue={content.contactPhone} className="input" />
+        <Field label="Contact phone (one or more, any format)">
+          <input name="contactPhone" defaultValue={content.contactPhone} className="input" placeholder="e.g. 0530901898 / 0509878889" />
         </Field>
       </div>
-      <Field label="Address">
-        <input name="address" defaultValue={content.address} className="input" />
+      <Field label="Address (one location per line)">
+        <textarea
+          name="address"
+          defaultValue={content.address}
+          rows={3}
+          className="input"
+          placeholder={"Konongo\nP.O. Box 87\nAccra, Legon"}
+        />
       </Field>
-      <Field label="Donate details (bank account / mobile money — shown on the Get Involved page)">
+      <Field label="Donate details (bank account / mobile money â€” shown on the Get Involved page)">
         <textarea name="donateInfo" defaultValue={content.donateInfo} rows={4} className="input" />
       </Field>
 
@@ -66,3 +89,4 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     </label>
   );
 }
+

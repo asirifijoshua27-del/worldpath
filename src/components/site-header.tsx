@@ -1,13 +1,18 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 
-export function SiteHeader({ orgName }: { orgName: string }) {
+export function SiteHeader({ orgName, logoUrl }: { orgName: string; logoUrl?: string | null }) {
   return (
     <header className="border-b border-line bg-paper/95 backdrop-blur sticky top-0 z-40">
       <div className="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
-          <span className="w-8 h-8 rounded-full bg-ink text-paper grid place-items-center font-display text-sm">
-            W
-          </span>
+          {logoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={logoUrl} alt={orgName} className="w-8 h-8 rounded-full object-cover" />
+          ) : (
+            <span className="w-8 h-8 rounded-full bg-ink text-paper grid place-items-center font-display text-sm">
+              W
+            </span>
+          )}
           <span className="font-display text-lg tracking-tight">{orgName}</span>
         </Link>
         <nav className="flex items-center gap-5 sm:gap-6 text-sm">
@@ -37,3 +42,4 @@ export function SiteHeader({ orgName }: { orgName: string }) {
     </header>
   );
 }
+

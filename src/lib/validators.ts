@@ -33,6 +33,8 @@ export const siteContentSchema = z.object({
   contactPhone: z.string().optional().default(""),
   address: z.string().optional().default(""),
   donateInfo: z.string().optional().default(""),
+  logoUrl: z.string().optional().default(""),
+  caretakingInfo: z.string().optional().default(""),
 });
 
 export const staffSchema = z.object({

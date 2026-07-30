@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import { getSiteContent, listStudents, listImpactStories, listStaff } from "@/lib/repo";
 import { SiteHeader } from "@/components/site-header";
@@ -26,14 +26,14 @@ export default function ImpactPage() {
 
   return (
     <>
-      <SiteHeader orgName={content.orgName} />
+      <SiteHeader orgName={content.orgName} logoUrl={content.logoUrl} />
       <main className="flex-1">
         <section className="bg-navy text-paper">
           <div className="mx-auto max-w-5xl px-6 pt-20 pb-16 text-center">
             <p className="uppercase tracking-[0.25em] text-xs text-paper/70 font-medium">Our impact</p>
             <h1 className="font-display text-4xl sm:text-5xl mt-5">Real students. Real universities.</h1>
             <p className="mt-6 text-lg text-paper/75 max-w-xl mx-auto">
-              Every number here reflects a student who is currently in our program right now — not a
+              Every number here reflects a student who is currently in our program right now â€” not a
               marketing estimate.
             </p>
           </div>
@@ -72,7 +72,7 @@ export default function ImpactPage() {
                     <div>
                       <p className="font-medium">{s.studentName}</p>
                       <p className="text-xs text-gold-deep uppercase tracking-wide">
-                        {s.destinationCountry} · {s.targetLevel}
+                        {s.destinationCountry} Â· {s.targetLevel}
                       </p>
                     </div>
                   </div>
@@ -99,7 +99,7 @@ export default function ImpactPage() {
           </div>
         </section>
       </main>
-      <SiteFooter orgName={content.orgName} contactEmail={content.contactEmail} address={content.address} />
+      <SiteFooter orgName={content.orgName} contactEmail={content.contactEmail} contactPhone={content.contactPhone} address={content.address} />
     </>
   );
 }
@@ -112,3 +112,4 @@ function Stat({ value, label }: { value: string | number; label: string }) {
     </div>
   );
 }
+

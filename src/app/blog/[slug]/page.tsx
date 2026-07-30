@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { marked } from "marked";
@@ -55,7 +55,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     <>
       {/* eslint-disable-next-line react/no-danger */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <SiteHeader orgName={content.orgName} />
+      <SiteHeader orgName={content.orgName} logoUrl={content.logoUrl} />
       <main className="flex-1">
         <article className="mx-auto max-w-2xl px-6 pt-16 pb-24">
           <Link href="/blog" className="text-sm text-teal hover:underline">
@@ -90,7 +90,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           </div>
         </article>
       </main>
-      <SiteFooter orgName={content.orgName} contactEmail={content.contactEmail} address={content.address} />
+      <SiteFooter orgName={content.orgName} contactEmail={content.contactEmail} contactPhone={content.contactPhone} address={content.address} />
     </>
   );
 }
+

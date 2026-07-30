@@ -1,4 +1,4 @@
-import { getSiteContent, listStaff, listBoardMembers } from "@/lib/repo";
+﻿import { getSiteContent, listStaff, listBoardMembers } from "@/lib/repo";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 
@@ -11,7 +11,7 @@ export default function AboutPage() {
 
   return (
     <>
-      <SiteHeader orgName={content.orgName} />
+      <SiteHeader orgName={content.orgName} logoUrl={content.logoUrl} />
       <main className="flex-1">
         <section className="mx-auto max-w-6xl px-6 pt-16 pb-8">
           <p className="uppercase tracking-[0.2em] text-xs text-gold-deep font-medium">About us</p>
@@ -45,7 +45,7 @@ export default function AboutPage() {
           )}
         </section>
       </main>
-      <SiteFooter orgName={content.orgName} contactEmail={content.contactEmail} address={content.address} />
+      <SiteFooter orgName={content.orgName} contactEmail={content.contactEmail} contactPhone={content.contactPhone} address={content.address} />
     </>
   );
 }
@@ -81,3 +81,4 @@ function PersonCard({
 function EmptyNote({ text }: { text: string }) {
   return <p className="text-sm text-ink/50 italic border border-dashed border-line rounded-xl p-6">{text}</p>;
 }
+

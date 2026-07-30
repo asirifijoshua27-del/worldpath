@@ -1,4 +1,4 @@
-export type Role = "admin" | "staff" | "student";
+﻿export type Role = "admin" | "staff" | "student";
 
 export type TargetLevel = "undergrad" | "masters" | "phd";
 
@@ -97,6 +97,8 @@ export interface SiteContentRecord {
   contactPhone: string;
   address: string;
   donateInfo: string;
+  logoUrl: string | null;
+  caretakingInfo: string;
 }
 
 export interface BlogPostRecord {
@@ -145,3 +147,4 @@ export interface SessionPayload {
   role: Role;
   name: string;
 }
+

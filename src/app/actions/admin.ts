@@ -1,4 +1,4 @@
-"use server";
+﻿"use server";
 
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
@@ -34,6 +34,21 @@ async function requireAdmin() {
 
 export async function updateSiteContentAction(_prev: FormState, formData: FormData): Promise<FormState> {
   await requireAdmin();
+
+  const existingLogoUrl = String(formData.get("existingLogoUrl") || "");
+  const logoFile = formData.get("logo");
+
+  let logoUrl = existingLogoUrl;
+  if (logoFile instanceof File && logoFile.size > 0) {
+    try {
+      logoUrl = await saveUploadedImage(logoFile);
+    } catch (e) {
+      if (e instanceof UploadError) return { error: e.message };
+      throw e;
+    }
+    if (existingLogoUrl) await deleteUploadedImage(existingLogoUrl);
+  }
+
   const parsed = siteContentSchema.safeParse({
     orgName: String(formData.get("orgName") || ""),
     tagline: String(formData.get("tagline") || ""),
@@ -42,6 +57,9 @@ export async function updateSiteContentAction(_prev: FormState, formData: FormDa
     contactEmail: String(formData.get("contactEmail") || ""),
     contactPhone: String(formData.get("contactPhone") || ""),
     address: String(formData.get("address") || ""),
+    donateInfo: String(formData.get("donateInfo") || ""),
+    caretakingInfo: String(formData.get("caretakingInfo") || ""),
+    logoUrl,
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message || "Please check the form." };
@@ -49,6 +67,9 @@ export async function updateSiteContentAction(_prev: FormState, formData: FormDa
   updateSiteContent(parsed.data);
   revalidatePath("/");
   revalidatePath("/about");
+  revalidatePath("/impact");
+  revalidatePath("/get-involved");
+  revalidatePath("/blog");
   revalidatePath("/admin/content");
   return { success: "Site content updated." };
 }
@@ -192,3 +213,4 @@ export async function createStaffUserAction(_prev: FormState, formData: FormData
   revalidatePath("/admin/staff");
   return { success: `Staff account created for ${parsed.data.name}. Share the temporary password securely.` };
 }
+

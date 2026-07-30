@@ -1,4 +1,4 @@
-import { db, newId, nowIso, nextStudentCode } from "@/lib/db";
+﻿import { db, newId, nowIso, nextStudentCode } from "@/lib/db";
 import type {
   UserRecord,
   StaffProfileRecord,
@@ -291,7 +291,7 @@ export function getSiteContent(): SiteContentRecord {
 export function updateSiteContent(input: Omit<SiteContentRecord, "id">) {
   db()
     .prepare(
-      `UPDATE site_content SET orgName = ?, tagline = ?, mission = ?, vision = ?, contactEmail = ?, contactPhone = ?, address = ?, donateInfo = ?
+      `UPDATE site_content SET orgName = ?, tagline = ?, mission = ?, vision = ?, contactEmail = ?, contactPhone = ?, address = ?, donateInfo = ?, logoUrl = ?, caretakingInfo = ?
        WHERE id = 1`
     )
     .run(
@@ -302,7 +302,9 @@ export function updateSiteContent(input: Omit<SiteContentRecord, "id">) {
       input.contactEmail,
       input.contactPhone,
       input.address,
-      input.donateInfo
+      input.donateInfo,
+      input.logoUrl,
+      input.caretakingInfo
     );
 }
 
@@ -525,3 +527,4 @@ export function createLead(input: { type: LeadType; name: string; email: string;
 export function markLeadHandled(id: string, handled: boolean) {
   db().prepare("UPDATE volunteer_leads SET handled = ? WHERE id = ?").run(handled ? 1 : 0, id);
 }
+

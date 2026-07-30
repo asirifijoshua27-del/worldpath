@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { getSiteContent, listStudents, listStaff } from "@/lib/repo";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -13,9 +13,9 @@ export default function HomePage() {
 
   return (
     <>
-      <SiteHeader orgName={content.orgName} />
+      <SiteHeader orgName={content.orgName} logoUrl={content.logoUrl} />
       <main className="flex-1">
-        {/* Hero — full-bleed navy, IvyWise-style */}
+        {/* Hero â€” full-bleed navy, IvyWise-style */}
         <section className="relative bg-navy text-paper overflow-hidden">
           <div
             className="absolute inset-0 opacity-40"
@@ -63,7 +63,7 @@ export default function HomePage() {
           </div>
           <div className="text-center pb-8">
             <Link href="/impact" className="text-sm text-teal hover:underline">
-              See our full impact & student stories →
+              See our full impact & student stories â†’
             </Link>
           </div>
         </section>
@@ -92,7 +92,7 @@ export default function HomePage() {
             <ServiceCard
               n="01"
               title="Application guidance"
-              body="One-on-one support building a competitive undergraduate, master's, or PhD application — from school shortlists to essays."
+              body="One-on-one support building a competitive undergraduate, master's, or PhD application â€” from school shortlists to essays."
             />
             <ServiceCard
               n="02"
@@ -102,7 +102,7 @@ export default function HomePage() {
             <ServiceCard
               n="03"
               title="Document & status tracking"
-              body="Your own portal to track every document, every stage, and every note from your counselor — always up to date."
+              body="Your own portal to track every document, every stage, and every note from your counselor â€” always up to date."
             />
           </div>
         </section>
@@ -114,13 +114,12 @@ export default function HomePage() {
               Beyond admissions
             </p>
             <h2 className="font-display text-2xl mb-3">WorldPath Caretaking Foundation</h2>
-            <p className="text-paper/80 max-w-2xl leading-relaxed mb-6">
-              Beyond university placement, our parent foundation supports caretaking homes with food
-              and daily necessities on a quarterly cycle — because a student's wellbeing at home is
-              part of their path to university too.
+            <p className="text-paper/80 max-w-2xl leading-relaxed mb-6 whitespace-pre-line">
+              {content.caretakingInfo ||
+                "Beyond university placement, our parent foundation supports caretaking homes with food and daily necessities â€” because a student's wellbeing at home is part of their path to university too."}
             </p>
             <Link href="/get-involved" className="text-sm text-paper underline hover:text-teal transition-colors">
-              See how you can help →
+              See how you can help â†’
             </Link>
           </div>
         </section>
@@ -130,7 +129,7 @@ export default function HomePage() {
           <div className="flex items-center justify-between mb-3">
             <p className="uppercase tracking-[0.2em] text-xs text-gold-deep font-medium">From the blog</p>
             <Link href="/blog" className="text-sm text-teal hover:underline">
-              All posts →
+              All posts â†’
             </Link>
           </div>
           <h2 className="font-display text-2xl mb-3">Guides for applying abroad</h2>
@@ -157,7 +156,7 @@ export default function HomePage() {
           </div>
         </section>
       </main>
-      <SiteFooter orgName={content.orgName} contactEmail={content.contactEmail} address={content.address} />
+      <SiteFooter orgName={content.orgName} contactEmail={content.contactEmail} contactPhone={content.contactPhone} address={content.address} />
     </>
   );
 }
@@ -180,3 +179,4 @@ function ServiceCard({ n, title, body }: { n: string; title: string; body: strin
     </div>
   );
 }
+
