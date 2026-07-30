@@ -1,0 +1,152 @@
+// WorldPath Group — Prisma schema
+// Default datasource below is SQLite for zero-setup local development.
+// For production, switch provider to "postgresql" and set DATABASE_URL
+// to your Postgres connection string (see README.md).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// role: "admin" | "staff" | "student"
+model User {
+  id            String   @id @default(cuid())
+  username      String   @unique
+  email         String   @unique
+  passwordHash  String? // null until the account finishes email verification + password setup
+  role          String   @default("student")
+  name          String
+  emailVerified Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  staffProfile      StaffProfile?
+  studentProfile     Student?
+  verifications      EmailVerification[]
+  authoredNotes      StudentNote[]        @relation("NoteAuthor")
+}
+
+model StaffProfile {
+  id       String  @id @default(cuid())
+  userId   String? @unique
+  user     User?   @relation(fields: [userId], references: [id])
+  name     String
+  title    String
+  bio      String
+  photoUrl String?
+  order    Int     @default(0)
+
+  assignedStudents Student[] @relation("AssignedStaff")
+}
+
+model BoardMember {
+  id       String  @id @default(cuid())
+  name     String
+  title    String
+  bio      String
+  photoUrl String?
+  order    Int     @default(0)
+}
+
+// targetLevel: "undergrad" | "masters" | "phd"
+// status: "new" | "documents_pending" | "in_review" | "submitted" | "scholarship_review" | "accepted" | "not_proceeding"
+model Student {
+  id                  String   @id @default(cuid())
+  code                String   @unique // e.g. WPG-2026-0001
+  userId              String   @unique
+  user                User     @relation(fields: [userId], references: [id])
+  targetLevel         String   @default("undergrad")
+  targetCountries      String   @default("[]") // JSON-encoded string array, e.g. ["USA","UK"]
+  status              String   @default("new")
+  assignedStaffId     String?
+  assignedStaff       StaffProfile? @relation("AssignedStaff", fields: [assignedStaffId], references: [id])
+  documents           String   @default("[]") // JSON-encoded checklist: [{ "name": "Transcript", "done": false }]
+  scholarshipInterest Boolean  @default(true)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  notes StudentNote[]
+}
+
+model StudentNote {
+  id        String   @id @default(cuid())
+  studentId String
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User     @relation("NoteAuthor", fields: [authorId], references: [id])
+  text      String
+  createdAt DateTime @default(now())
+}
+
+model SiteContent {
+  id           Int    @id @default(1)
+  orgName      String @default("WorldPath Group")
+  tagline      String @default("Opening the world's classrooms to Ghana's brightest students.")
+  mission      String @default("")
+  vision       String @default("")
+  contactEmail String @default("")
+  contactPhone String @default("")
+  address      String @default("")
+  donateInfo   String @default("")
+}
+
+// tags stored as a JSON-encoded string[] in the sqlite build for portability
+model BlogPost {
+  id            String    @id @default(cuid())
+  slug          String    @unique
+  title         String
+  excerpt       String
+  body          String // Markdown
+  coverImageUrl String?
+  tags          String    @default("[]")
+  authorName    String
+  published     Boolean   @default(false)
+  publishedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+// targetLevel: "undergrad" | "masters" | "phd"
+model ImpactStory {
+  id                 String   @id @default(cuid())
+  studentName        String
+  headline           String
+  story              String
+  photoUrl           String?
+  destinationCountry String
+  targetLevel        String   @default("undergrad")
+  featured           Boolean  @default(false)
+  sortOrder          Int      @default(0)
+  createdAt          DateTime @default(now())
+}
+
+// type: "volunteer" | "donate" | "apply_interest"
+model VolunteerLead {
+  id        String   @id @default(cuid())
+  type      String   @default("volunteer")
+  name      String
+  email     String
+  phone     String?
+  message   String
+  handled   Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model EmailVerification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Counter {
+  id    String @id
+  value Int    @default(0)
+}
