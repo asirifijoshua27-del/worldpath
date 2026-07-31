@@ -92,12 +92,28 @@ export const impactStorySchema = z.object({
   featured: z.boolean(),
 });
 
-export const leadSchema = z.object({
-  type: z.enum(["volunteer", "donate", "apply_interest"]),
-  name: z.string().min(2, "Enter your name"),
-  email: z.string().email("Enter a valid email address"),
-  phone: z.string().optional().default(""),
-  message: z.string().min(1, "Please add a short message"),
+export const leadSchema = z
+  .object({
+    type: z.enum(["volunteer", "donate", "apply_interest"]),
+    name: z.string().min(2, "Enter your name"),
+    email: z.string().email("Enter a valid email address"),
+    phone: z.string().optional().default(""),
+    message: z.string().optional().default(""),
+    areasOfInterest: z.array(z.string()).optional().default([]),
+    availability: z.string().optional().default(""),
+  })
+  .refine((data) => data.type !== "donate" || data.message.trim().length > 0, {
+    message: "Please add a short message",
+    path: ["message"],
+  })
+  .refine((data) => data.type !== "volunteer" || data.areasOfInterest.length > 0, {
+    message: "Choose at least one area you'd like to help with",
+    path: ["areasOfInterest"],
+  });
+
+export const adminEmailSchema = z.object({
+  subject: z.string().min(1, "Add a subject line"),
+  body: z.string().min(1, "Write a message"),
 });
 
 export const changePasswordSchema = z

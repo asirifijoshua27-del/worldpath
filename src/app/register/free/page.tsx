@@ -1,14 +1,26 @@
 ﻿"use client";
 
-import { useActionState } from "react";
+import { useActionState, startTransition } from "react";
 import Link from "next/link";
 import { registerFreeAction, type FormState } from "@/app/actions/auth";
 import { TARGET_COUNTRIES } from "@/types";
+import { PhotoUploadField } from "@/components/photo-upload-field";
 
 const initialState: FormState = {};
 
 export default function FreeRegisterPage() {
   const [state, formAction, pending] = useActionState(registerFreeAction, initialState);
+
+  // See the comment in /register/page.tsx: submitting manually (instead of
+  // wiring `action` directly to the form) keeps the student's answers on
+  // screen if a field needs fixing, rather than wiping the whole form.
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    startTransition(() => {
+      formAction(formData);
+    });
+  }
 
   return (
     <main className="flex-1 flex items-start justify-center py-16 px-6">
@@ -21,7 +33,12 @@ export default function FreeRegisterPage() {
           link to verify your email and set a password.
         </p>
 
-        <form action={formAction} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <span className="block text-sm font-medium mb-1.5">Your photo</span>
+            <PhotoUploadField />
+          </div>
+
           <Field label="Full name">
             <input name="name" required className="input" placeholder="e.g. Ama Serwaa Owusu" />
           </Field>

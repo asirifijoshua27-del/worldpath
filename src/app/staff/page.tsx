@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { getSession } from "@/lib/auth";
 import { getStaffByUserId, listStudentsByStaff, getUserById } from "@/lib/repo";
 import { APPLICATION_STATUSES } from "@/types";
@@ -37,9 +37,19 @@ export default async function StaffHomePage() {
               <Link
                 key={s.id}
                 href={`/staff/students/${s.id}`}
-                className="p-4 flex items-center justify-between gap-4 hover:bg-paper-dim transition-colors"
+                className="p-4 flex items-center gap-4 hover:bg-paper-dim transition-colors"
               >
-                <div>
+                <div className="w-10 h-10 rounded-full bg-paper-dim border border-line overflow-hidden shrink-0">
+                  {s.photoUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={s.photoUrl} alt={user?.name || ""} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full grid place-items-center text-xs text-ink/40">
+                      {user?.name?.charAt(0) ?? "?"}
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1">
                   <p className="font-medium">{user?.name}</p>
                   <p className="text-xs text-ink/50 font-mono">{s.code}</p>
                 </div>
@@ -52,3 +62,4 @@ export default async function StaffHomePage() {
     </div>
   );
 }
+

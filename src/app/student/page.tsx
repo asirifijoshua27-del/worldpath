@@ -26,9 +26,19 @@ export default async function StudentHomePage() {
 
   return (
     <div>
-      <p className="font-mono text-xs bg-paper-dim border border-line rounded px-2 py-1 inline-block mb-3">
-        {student.code}
-      </p>
+      <div className="flex items-center gap-4 mb-3">
+        <div className="w-14 h-14 rounded-full bg-paper-dim border border-line overflow-hidden shrink-0">
+          {student.photoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={student.photoUrl} alt={session?.name || ""} className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full grid place-items-center text-ink/40">{session?.name?.charAt(0) ?? "?"}</div>
+          )}
+        </div>
+        <p className="font-mono text-xs bg-paper-dim border border-line rounded px-2 py-1 inline-block">
+          {student.code}
+        </p>
+      </div>
       <h1 className="font-display text-3xl mb-2">Welcome, {session?.name}</h1>
       <p className="text-ink/60 mb-10">
         {staff ? `Your counselor is ${staff.name}.` : "A counselor hasn't been assigned yet â€” one will be soon."}

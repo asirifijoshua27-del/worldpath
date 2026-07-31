@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
 import { getSession } from "@/lib/auth";
 import { saveUploadedImage, deleteUploadedImage, UploadError } from "@/lib/uploads";
+import { sendAdminEmail, EmailSendError } from "@/lib/email";
 import {
   updateSiteContent,
   createStaff,
@@ -19,8 +20,16 @@ import {
   createUser,
   getUserByEmail,
   getUserByUsername,
+  getStudentById,
+  getUserById,
 } from "@/lib/repo";
-import { siteContentSchema, staffSchema, boardMemberSchema, createStaffUserSchema } from "@/lib/validators";
+import {
+  siteContentSchema,
+  staffSchema,
+  boardMemberSchema,
+  createStaffUserSchema,
+  adminEmailSchema,
+} from "@/lib/validators";
 import type { FormState } from "@/app/actions/auth";
 export type { FormState } from "@/app/actions/auth";
 
@@ -212,5 +221,35 @@ export async function createStaffUserAction(_prev: FormState, formData: FormData
   revalidatePath("/admin/users");
   revalidatePath("/admin/staff");
   return { success: `Staff account created for ${parsed.data.name}. Share the temporary password securely.` };
+}
+
+export async function emailStudentAction(studentId: string, _prev: FormState, formData: FormData): Promise<FormState> {
+  await requireAdmin();
+
+  const student = getStudentById(studentId);
+  if (!student) {
+    return { error: "Student not found." };
+  }
+  const user = getUserById(student.userId);
+  if (!user) {
+    return { error: "Student's account not found." };
+  }
+
+  const parsed = adminEmailSchema.safeParse({
+    subject: String(formData.get("subject") || ""),
+    body: String(formData.get("body") || ""),
+  });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message || "Please check the form." };
+  }
+
+  try {
+    await sendAdminEmail(user.email, parsed.data.subject, parsed.data.body);
+  } catch (e) {
+    if (e instanceof EmailSendError) return { error: e.message };
+    throw e;
+  }
+
+  return { success: `Email sent to ${user.email}.` };
 }
 

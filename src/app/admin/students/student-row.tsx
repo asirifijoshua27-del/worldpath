@@ -1,8 +1,10 @@
 ﻿"use client";
 
 import { useRef } from "react";
+import Link from "next/link";
 import { assignStudentAction, adminUpdateStatusAction } from "@/app/actions/admin";
 import { APPLICATION_STATUSES } from "@/types";
+import { PhotoLightbox } from "@/components/photo-lightbox";
 
 export function StudentRow({
   student,
@@ -18,6 +20,7 @@ export function StudentRow({
     assignedStaffId: string | null;
     applicationType: string;
     schoolName: string;
+    photoUrl: string | null;
   };
   staffOptions: { id: string; name: string }[];
 }) {
@@ -26,7 +29,16 @@ export function StudentRow({
 
   return (
     <tr className="border-b border-line last:border-0">
-      <td className="py-3 pl-4 pr-4">
+      <td className="py-3 pl-4 pr-2">
+        <div className="w-9 h-9 rounded-full bg-paper-dim border border-line overflow-hidden">
+          {student.photoUrl ? (
+            <PhotoLightbox src={student.photoUrl} alt={student.name} className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full grid place-items-center text-xs text-ink/40">{student.name.charAt(0)}</div>
+          )}
+        </div>
+      </td>
+      <td className="py-3 pr-4">
         <span className="font-mono text-xs bg-paper-dim border border-line rounded px-2 py-1">{student.code}</span>
       </td>
       <td className="py-3 pr-4">
@@ -78,6 +90,11 @@ export function StudentRow({
             ))}
           </select>
         </form>
+      </td>
+      <td className="py-3 pr-4 text-right">
+        <Link href={`/admin/students/${student.id}`} className="text-teal hover:underline text-xs">
+          Details
+        </Link>
       </td>
     </tr>
   );

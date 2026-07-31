@@ -218,6 +218,7 @@ export function createStudentForUser(input: {
   currentEducationLevel?: string;
   schoolName?: string;
   applicationType?: "standard" | "free_shs";
+  photoUrl?: string | null;
 }): StudentRecord {
   const id = newId();
   const now = nowIso();
@@ -225,8 +226,8 @@ export function createStudentForUser(input: {
   db()
     .prepare(
       `INSERT INTO students
-        (id, code, userId, targetLevel, targetCountries, status, assignedStaffId, documents, scholarshipInterest, currentEducationLevel, schoolName, applicationType, createdAt, updatedAt)
-       VALUES (?, ?, ?, ?, ?, 'new', NULL, ?, ?, ?, ?, ?, ?, ?)`
+        (id, code, userId, targetLevel, targetCountries, status, assignedStaffId, documents, scholarshipInterest, currentEducationLevel, schoolName, applicationType, photoUrl, createdAt, updatedAt)
+       VALUES (?, ?, ?, ?, ?, 'new', NULL, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
     .run(
       id,
@@ -239,6 +240,7 @@ export function createStudentForUser(input: {
       input.currentEducationLevel ?? "",
       input.schoolName ?? "",
       input.applicationType ?? "standard",
+      input.photoUrl ?? null,
       now,
       now
     );
@@ -525,13 +527,31 @@ export function listLeads(): VolunteerLeadRecord[] {
   return db().prepare("SELECT * FROM volunteer_leads ORDER BY createdAt DESC").all() as unknown as VolunteerLeadRecord[];
 }
 
-export function createLead(input: { type: LeadType; name: string; email: string; phone?: string; message: string }) {
+export function createLead(input: {
+  type: LeadType;
+  name: string;
+  email: string;
+  phone?: string;
+  message: string;
+  areasOfInterest?: string[];
+  availability?: string;
+}) {
   db()
     .prepare(
-      `INSERT INTO volunteer_leads (id, type, name, email, phone, message, handled, createdAt)
-       VALUES (?, ?, ?, ?, ?, ?, 0, ?)`
+      `INSERT INTO volunteer_leads (id, type, name, email, phone, message, areasOfInterest, availability, handled, createdAt)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?)`
     )
-    .run(newId(), input.type, input.name, input.email, input.phone ?? null, input.message, nowIso());
+    .run(
+      newId(),
+      input.type,
+      input.name,
+      input.email,
+      input.phone ?? null,
+      input.message,
+      JSON.stringify(input.areasOfInterest ?? []),
+      input.availability ?? "",
+      nowIso()
+    );
 }
 
 export function markLeadHandled(id: string, handled: boolean) {

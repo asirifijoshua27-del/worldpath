@@ -1,14 +1,30 @@
 ﻿"use client";
 
-import { useActionState } from "react";
+import { useActionState, useRef, startTransition } from "react";
 import Link from "next/link";
 import { registerAction, type FormState } from "@/app/actions/auth";
 import { TARGET_LEVELS, TARGET_COUNTRIES, CURRENT_EDUCATION_LEVELS } from "@/types";
+import { PhotoUploadField } from "@/components/photo-upload-field";
 
 const initialState: FormState = {};
 
 export default function RegisterPage() {
   const [state, formAction, pending] = useActionState(registerAction, initialState);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  // React resets uncontrolled form fields the moment a <form action={...}>
+  // submits â€” including on a failed submission. On a form this long,
+  // that means a student who forgets one field (like the photo) would
+  // see everything they typed disappear. Submitting manually like this,
+  // instead of wiring `action` directly to the form, keeps their answers
+  // on screen if something needs fixing.
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    startTransition(() => {
+      formAction(formData);
+    });
+  }
 
   return (
     <main className="flex-1 flex items-start justify-center py-16 px-6">
@@ -26,7 +42,12 @@ export default function RegisterPage() {
           </Link>
         </div>
 
-        <form action={formAction} className="space-y-5">
+        <form ref={formRef} onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <span className="block text-sm font-medium mb-1.5">Your photo</span>
+            <PhotoUploadField />
+          </div>
+
           <Field label="Full name">
             <input name="name" required className="input" placeholder="e.g. Ama Serwaa Owusu" />
           </Field>

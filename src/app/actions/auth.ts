@@ -18,6 +18,7 @@ import {
 } from "@/lib/repo";
 import { sendVerificationEmail } from "@/lib/email";
 import { createSessionToken, setSessionCookie, clearSessionCookie } from "@/lib/auth";
+import { saveUploadedImage, UploadError } from "@/lib/uploads";
 
 export type FormState = { error?: string; success?: string };
 
@@ -71,6 +72,18 @@ export async function registerAction(_prev: FormState, formData: FormData): Prom
     return { error: parsed.error.issues[0]?.message || "Please check the form and try again." };
   }
 
+  const photoFile = formData.get("photo");
+  if (!(photoFile instanceof File) || photoFile.size === 0) {
+    return { error: "Please attach a photo of yourself." };
+  }
+  let photoUrl: string;
+  try {
+    photoUrl = await saveUploadedImage(photoFile);
+  } catch (e) {
+    if (e instanceof UploadError) return { error: e.message };
+    throw e;
+  }
+
   if (getUserByEmail(parsed.data.email)) {
     return { error: "An account with this email already exists. Try logging in instead." };
   }
@@ -84,6 +97,7 @@ export async function registerAction(_prev: FormState, formData: FormData): Prom
     scholarshipInterest: parsed.data.scholarshipInterest,
     currentEducationLevel: parsed.data.currentEducationLevel,
     applicationType: "standard",
+    photoUrl,
   });
 
   redirect(`/register/check-email?email=${encodeURIComponent(user.email)}`);
@@ -102,6 +116,18 @@ export async function registerFreeAction(_prev: FormState, formData: FormData): 
     return { error: parsed.error.issues[0]?.message || "Please check the form and try again." };
   }
 
+  const photoFile = formData.get("photo");
+  if (!(photoFile instanceof File) || photoFile.size === 0) {
+    return { error: "Please attach a photo of yourself." };
+  }
+  let photoUrl: string;
+  try {
+    photoUrl = await saveUploadedImage(photoFile);
+  } catch (e) {
+    if (e instanceof UploadError) return { error: e.message };
+    throw e;
+  }
+
   if (getUserByEmail(parsed.data.email)) {
     return { error: "An account with this email already exists. Try logging in instead." };
   }
@@ -116,6 +142,7 @@ export async function registerFreeAction(_prev: FormState, formData: FormData): 
     currentEducationLevel: "shs_current",
     schoolName: parsed.data.schoolName,
     applicationType: "free_shs",
+    photoUrl,
   });
 
   redirect(`/register/check-email?email=${encodeURIComponent(user.email)}`);

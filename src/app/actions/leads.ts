@@ -1,4 +1,4 @@
-"use server";
+﻿"use server";
 
 import { revalidatePath } from "next/cache";
 import { getSession } from "@/lib/auth";
@@ -14,12 +14,14 @@ export async function submitLeadAction(_prev: FormState, formData: FormData): Pr
     email: String(formData.get("email") || ""),
     phone: String(formData.get("phone") || ""),
     message: String(formData.get("message") || ""),
+    areasOfInterest: formData.getAll("areasOfInterest").map(String),
+    availability: String(formData.get("availability") || ""),
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message || "Please check the form." };
   }
   createLead(parsed.data);
-  return { success: "Thanks — we'll be in touch soon." };
+  return { success: "Thanks â€” we'll be in touch soon." };
 }
 
 export async function markLeadHandledAction(formData: FormData) {
@@ -32,3 +34,4 @@ export async function markLeadHandledAction(formData: FormData) {
   markLeadHandled(id, handled);
   revalidatePath("/admin/leads");
 }
+

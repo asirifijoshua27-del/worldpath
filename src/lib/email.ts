@@ -1,4 +1,4 @@
-import { Resend } from "resend";
+﻿import { Resend } from "resend";
 
 // Sends the email-verification link via Resend when RESEND_API_KEY is set.
 // Without it (e.g. local development), the link is logged to the server
@@ -72,3 +72,55 @@ export async function sendVerificationEmail(to: string, name: string, verifyUrl:
     logToConsole(to, name, verifyUrl);
   }
 }
+
+export class EmailSendError extends Error {}
+
+function adminEmailHtml(body: string): string {
+  const paragraphs = body
+    .split("\n")
+    .filter((line) => line.trim())
+    .map((line) => `<p style="font-size:15px;line-height:1.6;color:#0a2e3d;margin:0 0 14px;">${line}</p>`)
+    .join("");
+  return `
+  <div style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;color:#0a2e3d;">
+    <p style="text-transform:uppercase;letter-spacing:0.15em;font-size:11px;color:#0b5c73;font-weight:600;margin:0 0 16px;">
+      WorldPath Group
+    </p>
+    ${paragraphs}
+  </div>`;
+}
+
+/**
+ * General-purpose email sender used by the admin portal to message a
+ * student directly. Throws EmailSendError if RESEND_API_KEY isn't
+ * configured or the send fails, so the caller can show the admin a real
+ * error rather than silently pretending it worked.
+ */
+export async function sendAdminEmail(to: string, subject: string, body: string) {
+  const apiKey = process.env.RESEND_API_KEY;
+  const fromEmail = process.env.RESEND_FROM_EMAIL || "WorldPath Group <onboarding@resend.dev>";
+
+  if (!apiKey) {
+    throw new EmailSendError(
+      "Email sending isn't configured yet (no RESEND_API_KEY set). This message wasn't sent."
+    );
+  }
+
+  const resend = new Resend(apiKey);
+  try {
+    const { error } = await resend.emails.send({
+      from: fromEmail,
+      to,
+      subject,
+      html: adminEmailHtml(body),
+      text: body,
+    });
+    if (error) {
+      throw new EmailSendError(error.message || "Resend rejected this email.");
+    }
+  } catch (err) {
+    if (err instanceof EmailSendError) throw err;
+    throw new EmailSendError("Could not send email. Please try again.");
+  }
+}
+

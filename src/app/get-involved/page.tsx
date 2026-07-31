@@ -4,6 +4,7 @@ import { getSiteContent } from "@/lib/repo";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { LeadForm } from "@/components/lead-form";
+import { VolunteerApplicationForm } from "@/components/volunteer-application-form";
 
 export const dynamic = "force-dynamic";
 
@@ -78,17 +79,13 @@ export default function GetInvolvedPage() {
         {/* Volunteer */}
         <section id="volunteer" className="mx-auto max-w-4xl px-6 py-14 border-t border-line">
           <p className="uppercase tracking-[0.2em] text-xs text-gold-deep font-medium mb-3">Volunteer</p>
-          <h2 className="font-display text-3xl mb-3">Share your time or expertise</h2>
+          <h2 className="font-display text-3xl mb-3">Join WorldPath Group as a volunteer</h2>
           <p className="text-ink/70 max-w-2xl mb-8">
             We're always looking for essay reviewers, mock interviewers, and counselors who've been
             through the process themselves.
           </p>
-          <div className="max-w-lg">
-            <LeadForm
-              type="volunteer"
-              messagePlaceholder="What would you like to help with?"
-              submitLabel="Submit interest"
-            />
+          <div className="max-w-xl">
+            <VolunteerApplicationForm />
           </div>
         </section>
       </main>

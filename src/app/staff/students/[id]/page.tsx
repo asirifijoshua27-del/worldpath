@@ -5,6 +5,7 @@ import { StatusSelect } from "./status-select";
 import { DocumentChecklist } from "./document-checklist";
 import { MessageThread } from "@/components/message-thread";
 import { MessageForm } from "@/components/message-form";
+import { PhotoLightbox } from "@/components/photo-lightbox";
 import { staffAddNoteAction } from "@/app/actions/staff";
 import type { DocumentItem } from "@/types";
 
@@ -26,11 +27,24 @@ export default async function StaffStudentPage({ params }: { params: Promise<{ i
 
   return (
     <div className="max-w-3xl">
-      <p className="font-mono text-xs bg-paper-dim border border-line rounded px-2 py-1 inline-block mb-3">
-        {student.code}
-      </p>
-      <h1 className="font-display text-3xl mb-1">{user?.name}</h1>
-      <p className="text-ink/60 mb-8">{user?.email}</p>
+      <div className="flex items-start gap-5 mb-8">
+        <div className="w-20 h-20 rounded-full bg-paper-dim border border-line overflow-hidden shrink-0">
+          {student.photoUrl ? (
+            <PhotoLightbox src={student.photoUrl} alt={user?.name || "Student"} className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full grid place-items-center text-xl text-ink/40">
+              {user?.name?.charAt(0) ?? "?"}
+            </div>
+          )}
+        </div>
+        <div>
+          <p className="font-mono text-xs bg-paper-dim border border-line rounded px-2 py-1 inline-block mb-2">
+            {student.code}
+          </p>
+          <h1 className="font-display text-3xl mb-1">{user?.name}</h1>
+          <p className="text-ink/60">{user?.email}</p>
+        </div>
+      </div>
 
       <div className="grid sm:grid-cols-2 gap-8 mb-10">
         <div>

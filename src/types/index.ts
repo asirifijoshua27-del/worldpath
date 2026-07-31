@@ -91,6 +91,7 @@ export interface StudentRecord {
   currentEducationLevel: CurrentEducationLevel | "";
   schoolName: string;
   applicationType: ApplicationType;
+  photoUrl: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -155,9 +156,21 @@ export interface VolunteerLeadRecord {
   email: string;
   phone: string | null;
   message: string;
+  areasOfInterest: string; // JSON-encoded string[], only meaningful for type "volunteer"
+  availability: string;
   handled: number;
   createdAt: string;
 }
+
+export const VOLUNTEER_AREAS = [
+  "Essay review",
+  "Mock interviews",
+  "Mentoring a student",
+  "Fundraising",
+  "Event support",
+  "Social media / content",
+  "Other",
+];
 
 export interface SessionPayload {
   userId: string;
