@@ -1,7 +1,8 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { listStaff } from "@/lib/repo";
 import { DeleteButton } from "@/components/delete-button";
 import { deleteStaffAction } from "@/app/actions/admin";
+import { PhotoLightbox } from "@/components/photo-lightbox";
 
 export const dynamic = "force-dynamic";
 
@@ -23,8 +24,15 @@ export default function AdminStaffPage() {
       <div className="divide-y divide-line border border-line rounded-xl">
         {staff.length === 0 && <p className="p-6 text-sm text-ink/50 italic">No staff members yet.</p>}
         {staff.map((s) => (
-          <div key={s.id} className="p-4 flex items-center justify-between gap-4">
-            <div>
+          <div key={s.id} className="p-4 flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-paper-dim border border-line overflow-hidden shrink-0">
+              {s.photoUrl ? (
+                <PhotoLightbox src={s.photoUrl} alt={s.name} className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full grid place-items-center text-xs text-ink/40">{s.name.charAt(0)}</div>
+              )}
+            </div>
+            <div className="flex-1">
               <p className="font-medium">{s.name}</p>
               <p className="text-sm text-ink/60">{s.title}</p>
             </div>
@@ -40,3 +48,4 @@ export default function AdminStaffPage() {
     </div>
   );
 }
+

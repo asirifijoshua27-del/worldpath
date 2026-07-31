@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useRef } from "react";
 import { assignStudentAction, adminUpdateStatusAction } from "@/app/actions/admin";
@@ -16,6 +16,8 @@ export function StudentRow({
     targetLevel: string;
     status: string;
     assignedStaffId: string | null;
+    applicationType: string;
+    schoolName: string;
   };
   staffOptions: { id: string; name: string }[];
 }) {
@@ -30,6 +32,16 @@ export function StudentRow({
       <td className="py-3 pr-4">
         <p className="font-medium">{student.name}</p>
         <p className="text-xs text-ink/50">{student.email}</p>
+      </td>
+      <td className="py-3 pr-4">
+        {student.applicationType === "free_shs" ? (
+          <>
+            <span className="text-xs uppercase tracking-wide text-gold-deep font-medium">Free Â· SHS</span>
+            {student.schoolName && <p className="text-xs text-ink/50 mt-0.5">{student.schoolName}</p>}
+          </>
+        ) : (
+          <span className="text-xs text-ink/50">Standard</span>
+        )}
       </td>
       <td className="py-3 pr-4 text-sm capitalize">{student.targetLevel}</td>
       <td className="py-3 pr-4">
@@ -70,3 +82,4 @@ export function StudentRow({
     </tr>
   );
 }
+

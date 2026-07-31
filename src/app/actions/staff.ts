@@ -1,4 +1,4 @@
-"use server";
+﻿"use server";
 
 import { revalidatePath } from "next/cache";
 import { getSession } from "@/lib/auth";
@@ -10,6 +10,7 @@ import {
   addNote,
 } from "@/lib/repo";
 import { noteSchema } from "@/lib/validators";
+import { saveUploadedImage, UploadError } from "@/lib/uploads";
 import type { FormState } from "@/app/actions/auth";
 import type { DocumentItem } from "@/types";
 
@@ -55,9 +56,26 @@ export async function staffAddNoteAction(
   const { session } = await requireOwningStaff(studentId);
   const parsed = noteSchema.safeParse({ text: String(formData.get("text") || "") });
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message || "Note cannot be empty." };
+    return { error: parsed.error.issues[0]?.message || "Please check the form." };
   }
-  addNote(studentId, session.userId, parsed.data.text);
+
+  const imageFile = formData.get("image");
+  let attachmentUrl: string | null = null;
+  if (imageFile instanceof File && imageFile.size > 0) {
+    try {
+      attachmentUrl = await saveUploadedImage(imageFile);
+    } catch (e) {
+      if (e instanceof UploadError) return { error: e.message };
+      throw e;
+    }
+  }
+
+  if (!parsed.data.text.trim() && !attachmentUrl) {
+    return { error: "Add a note or attach a picture." };
+  }
+
+  addNote(studentId, session.userId, parsed.data.text.trim(), attachmentUrl);
   revalidatePath(`/staff/students/${studentId}`);
   return { success: "Note added." };
 }
+

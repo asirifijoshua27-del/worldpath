@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 
 import { useActionState } from "react";
 import Link from "next/link";
 import { registerAction, type FormState } from "@/app/actions/auth";
-import { TARGET_LEVELS, TARGET_COUNTRIES } from "@/types";
+import { TARGET_LEVELS, TARGET_COUNTRIES, CURRENT_EDUCATION_LEVELS } from "@/types";
 
 const initialState: FormState = {};
 
@@ -15,9 +15,16 @@ export default function RegisterPage() {
       <div className="w-full max-w-lg">
         <p className="uppercase tracking-[0.2em] text-xs text-gold-deep font-medium">Get started</p>
         <h1 className="font-display text-3xl mt-3 mb-2">Create your student account</h1>
-        <p className="text-sm text-ink/70 mb-8">
+        <p className="text-sm text-ink/70 mb-6">
           You'll get a WorldPath student code and a link to verify your email and set a password.
         </p>
+
+        <div className="mb-8 rounded-xl border border-gold-deep/30 bg-gold/5 px-4 py-3 text-sm">
+          Currently a Senior High School student?{" "}
+          <Link href="/register/free" className="text-gold-deep font-medium hover:underline">
+            Apply through our free application program â†’
+          </Link>
+        </div>
 
         <form action={formAction} className="space-y-5">
           <Field label="Full name">
@@ -31,6 +38,16 @@ export default function RegisterPage() {
           <Field label="What are you applying for?">
             <select name="targetLevel" className="input" defaultValue="undergrad">
               {TARGET_LEVELS.map((l) => (
+                <option key={l.value} value={l.value}>
+                  {l.label}
+                </option>
+              ))}
+            </select>
+          </Field>
+
+          <Field label="Your current education level">
+            <select name="currentEducationLevel" className="input" defaultValue="tertiary">
+              {CURRENT_EDUCATION_LEVELS.map((l) => (
                 <option key={l.value} value={l.value}>
                   {l.label}
                 </option>
@@ -84,3 +101,4 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     </label>
   );
 }
+

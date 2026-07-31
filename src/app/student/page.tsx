@@ -1,7 +1,11 @@
-import { getSession } from "@/lib/auth";
+﻿import { getSession } from "@/lib/auth";
 import { getStudentByUserId, getStaffById, listNotesForStudent } from "@/lib/repo";
 import { APPLICATION_STATUSES } from "@/types";
 import type { DocumentItem } from "@/types";
+import { DocumentUploadRow } from "./document-upload-row";
+import { MessageThread } from "@/components/message-thread";
+import { MessageForm } from "@/components/message-form";
+import { studentAddNoteAction } from "@/app/actions/student";
 
 export const dynamic = "force-dynamic";
 
@@ -27,7 +31,7 @@ export default async function StudentHomePage() {
       </p>
       <h1 className="font-display text-3xl mb-2">Welcome, {session?.name}</h1>
       <p className="text-ink/60 mb-10">
-        {staff ? `Your counselor is ${staff.name}.` : "A counselor hasn't been assigned yet — one will be soon."}
+        {staff ? `Your counselor is ${staff.name}.` : "A counselor hasn't been assigned yet â€” one will be soon."}
       </p>
 
       <div className="grid sm:grid-cols-2 gap-6 mb-10">
@@ -49,39 +53,34 @@ export default async function StudentHomePage() {
             {completedDocs}/{documents.length} complete
           </span>
         </div>
+        <p className="text-xs text-ink/50 mb-3">
+          Upload a photo or PDF of each document. Uploading automatically marks it complete.
+        </p>
         <ul className="space-y-2">
-          {documents.map((doc) => (
-            <li
-              key={doc.name}
-              className="flex items-center gap-3 border border-line rounded-lg px-3 py-2 text-sm"
-            >
-              <span
-                className={`w-4 h-4 rounded border grid place-items-center text-[10px] ${
-                  doc.done ? "bg-teal border-teal text-white" : "border-line"
-                }`}
-              >
-                {doc.done ? "✓" : ""}
-              </span>
-              <span className={doc.done ? "line-through text-ink/50" : ""}>{doc.name}</span>
-            </li>
+          {documents.map((doc, index) => (
+            <DocumentUploadRow key={doc.name} doc={doc} index={index} />
           ))}
         </ul>
       </div>
 
       <div>
-        <h2 className="font-display text-xl mb-4">Notes from your counselor</h2>
-        {notes.length === 0 && <p className="text-sm text-ink/50 italic">No notes yet.</p>}
-        <div className="space-y-4">
-          {notes.map((n) => (
-            <div key={n.id} className="border-b border-line pb-4">
-              <p className="text-sm">{n.text}</p>
-              <p className="text-xs text-ink/40 mt-1">
-                {n.authorName} · {new Date(n.createdAt).toLocaleString()}
-              </p>
-            </div>
-          ))}
+        <h2 className="font-display text-xl mb-4">Messages with your counselor</h2>
+        <div className="border border-line rounded-xl p-5 mb-4 max-h-96 overflow-y-auto">
+          <MessageThread
+            messages={notes.map((n) => ({
+              id: n.id,
+              text: n.text,
+              attachmentUrl: n.attachmentUrl,
+              authorName: n.authorName,
+              authorRole: n.authorRole,
+              createdAt: n.createdAt,
+            }))}
+            viewerRole="student"
+          />
         </div>
+        <MessageForm action={studentAddNoteAction} placeholder="Send a message to your counselor..." />
       </div>
     </div>
   );
 }
+

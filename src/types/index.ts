@@ -29,9 +29,22 @@ export const TARGET_LEVELS: { value: TargetLevel; label: string }[] = [
 
 export const TARGET_COUNTRIES = ["USA", "Canada", "UK", "Germany", "Other Europe", "Asia"];
 
+export type CurrentEducationLevel = "shs_current" | "shs_graduate" | "tertiary" | "graduate" | "other";
+
+export const CURRENT_EDUCATION_LEVELS: { value: CurrentEducationLevel; label: string }[] = [
+  { value: "shs_graduate", label: "Completed Senior High School / awaiting results" },
+  { value: "tertiary", label: "Currently in university / tertiary institution" },
+  { value: "graduate", label: "Already completed a university degree" },
+  { value: "other", label: "Other" },
+];
+
+export type ApplicationType = "standard" | "free_shs";
+
 export interface DocumentItem {
   name: string;
   done: boolean;
+  fileUrl?: string | null;
+  uploadedAt?: string | null;
 }
 
 export interface UserRecord {
@@ -75,6 +88,9 @@ export interface StudentRecord {
   assignedStaffId: string | null;
   documents: string; // JSON-encoded DocumentItem[]
   scholarshipInterest: number;
+  currentEducationLevel: CurrentEducationLevel | "";
+  schoolName: string;
+  applicationType: ApplicationType;
   createdAt: string;
   updatedAt: string;
 }
@@ -84,6 +100,7 @@ export interface StudentNoteRecord {
   studentId: string;
   authorId: string;
   text: string;
+  attachmentUrl: string | null;
   createdAt: string;
 }
 

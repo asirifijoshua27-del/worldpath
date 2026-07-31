@@ -1,9 +1,11 @@
-import { notFound } from "next/navigation";
+﻿import { notFound } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { getStaffByUserId, getStudentById, getUserById, listNotesForStudent } from "@/lib/repo";
 import { StatusSelect } from "./status-select";
 import { DocumentChecklist } from "./document-checklist";
-import { NoteForm } from "./note-form";
+import { MessageThread } from "@/components/message-thread";
+import { MessageForm } from "@/components/message-form";
+import { staffAddNoteAction } from "@/app/actions/staff";
 import type { DocumentItem } from "@/types";
 
 export const dynamic = "force-dynamic";
@@ -20,6 +22,7 @@ export default async function StaffStudentPage({ params }: { params: Promise<{ i
   const notes = listNotesForStudent(student.id);
   const documents = JSON.parse(student.documents) as DocumentItem[];
   const targetCountries = JSON.parse(student.targetCountries) as string[];
+  const addNote = staffAddNoteAction.bind(null, student.id);
 
   return (
     <div className="max-w-3xl">
@@ -47,20 +50,23 @@ export default async function StaffStudentPage({ params }: { params: Promise<{ i
       </div>
 
       <div>
-        <h2 className="font-display text-xl mb-4">Notes</h2>
-        <NoteForm studentId={student.id} />
-        <div className="mt-6 space-y-4">
-          {notes.length === 0 && <p className="text-sm text-ink/50 italic">No notes yet.</p>}
-          {notes.map((n) => (
-            <div key={n.id} className="border-b border-line pb-4">
-              <p className="text-sm">{n.text}</p>
-              <p className="text-xs text-ink/40 mt-1">
-                {n.authorName} · {new Date(n.createdAt).toLocaleString()}
-              </p>
-            </div>
-          ))}
+        <h2 className="font-display text-xl mb-4">Messages</h2>
+        <div className="border border-line rounded-xl p-5 mb-4 max-h-96 overflow-y-auto">
+          <MessageThread
+            messages={notes.map((n) => ({
+              id: n.id,
+              text: n.text,
+              attachmentUrl: n.attachmentUrl,
+              authorName: n.authorName,
+              authorRole: n.authorRole,
+              createdAt: n.createdAt,
+            }))}
+            viewerRole="staff"
+          />
         </div>
+        <MessageForm action={addNote} placeholder="Send a message to this student..." />
       </div>
     </div>
   );
 }
+

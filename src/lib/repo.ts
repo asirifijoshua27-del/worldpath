@@ -215,6 +215,9 @@ export function createStudentForUser(input: {
   targetLevel: TargetLevel;
   targetCountries: string[];
   scholarshipInterest: boolean;
+  currentEducationLevel?: string;
+  schoolName?: string;
+  applicationType?: "standard" | "free_shs";
 }): StudentRecord {
   const id = newId();
   const now = nowIso();
@@ -222,8 +225,8 @@ export function createStudentForUser(input: {
   db()
     .prepare(
       `INSERT INTO students
-        (id, code, userId, targetLevel, targetCountries, status, assignedStaffId, documents, scholarshipInterest, createdAt, updatedAt)
-       VALUES (?, ?, ?, ?, ?, 'new', NULL, ?, ?, ?, ?)`
+        (id, code, userId, targetLevel, targetCountries, status, assignedStaffId, documents, scholarshipInterest, currentEducationLevel, schoolName, applicationType, createdAt, updatedAt)
+       VALUES (?, ?, ?, ?, ?, 'new', NULL, ?, ?, ?, ?, ?, ?, ?)`
     )
     .run(
       id,
@@ -233,6 +236,9 @@ export function createStudentForUser(input: {
       JSON.stringify(input.targetCountries),
       JSON.stringify(DEFAULT_CHECKLIST),
       input.scholarshipInterest ? 1 : 0,
+      input.currentEducationLevel ?? "",
+      input.schoolName ?? "",
+      input.applicationType ?? "standard",
       now,
       now
     );
@@ -266,20 +272,24 @@ export function updateStudentTargets(
 
 // ---------- Student notes ----------
 
-export function listNotesForStudent(studentId: string): (StudentNoteRecord & { authorName: string })[] {
+export function listNotesForStudent(
+  studentId: string
+): (StudentNoteRecord & { authorName: string; authorRole: Role })[] {
   return db()
     .prepare(
-      `SELECT n.*, u.name as authorName FROM student_notes n
+      `SELECT n.*, u.name as authorName, u.role as authorRole FROM student_notes n
        JOIN users u ON u.id = n.authorId
-       WHERE n.studentId = ? ORDER BY n.createdAt DESC`
+       WHERE n.studentId = ? ORDER BY n.createdAt ASC`
     )
-    .all(studentId) as unknown as (StudentNoteRecord & { authorName: string })[];
+    .all(studentId) as unknown as (StudentNoteRecord & { authorName: string; authorRole: Role })[];
 }
 
-export function addNote(studentId: string, authorId: string, text: string) {
+export function addNote(studentId: string, authorId: string, text: string, attachmentUrl?: string | null) {
   db()
-    .prepare(`INSERT INTO student_notes (id, studentId, authorId, text, createdAt) VALUES (?, ?, ?, ?, ?)`)
-    .run(newId(), studentId, authorId, text, nowIso());
+    .prepare(
+      `INSERT INTO student_notes (id, studentId, authorId, text, attachmentUrl, createdAt) VALUES (?, ?, ?, ?, ?, ?)`
+    )
+    .run(newId(), studentId, authorId, text, attachmentUrl ?? null, nowIso());
 }
 
 // ---------- Site content ----------

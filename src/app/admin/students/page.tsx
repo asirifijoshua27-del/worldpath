@@ -1,4 +1,4 @@
-import { listStudents, listStaff, getUserById } from "@/lib/repo";
+﻿import { listStudents, listStaff, getUserById } from "@/lib/repo";
 import { StudentRow } from "./student-row";
 
 export const dynamic = "force-dynamic";
@@ -12,11 +12,13 @@ export default function AdminStudentsPage() {
     return {
       id: s.id,
       code: s.code,
-      name: user?.name || "—",
-      email: user?.email || "—",
+      name: user?.name || "â€”",
+      email: user?.email || "â€”",
       targetLevel: s.targetLevel,
       status: s.status,
       assignedStaffId: s.assignedStaffId,
+      applicationType: s.applicationType,
+      schoolName: s.schoolName,
     };
   });
 
@@ -31,6 +33,7 @@ export default function AdminStudentsPage() {
             <tr className="text-left text-xs uppercase tracking-wide text-ink/50 border-b border-line">
               <th className="py-3 px-4 font-medium">Code</th>
               <th className="py-3 px-4 font-medium">Student</th>
+              <th className="py-3 px-4 font-medium">Program</th>
               <th className="py-3 px-4 font-medium">Level</th>
               <th className="py-3 px-4 font-medium">Status</th>
               <th className="py-3 px-4 font-medium">Assigned staff</th>
@@ -39,7 +42,7 @@ export default function AdminStudentsPage() {
           <tbody className="px-4">
             {rows.length === 0 && (
               <tr>
-                <td colSpan={5} className="py-6 px-4 text-ink/50 italic">
+                <td colSpan={6} className="py-6 px-4 text-ink/50 italic">
                   No students have registered yet.
                 </td>
               </tr>
@@ -53,3 +56,4 @@ export default function AdminStudentsPage() {
     </div>
   );
 }
+

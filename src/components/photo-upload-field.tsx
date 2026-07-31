@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useRef, useState } from "react";
 
@@ -51,7 +51,7 @@ export function PhotoUploadField({
       >
         <div
           className={`bg-paper-dim border border-line grid place-items-center overflow-hidden shrink-0 ${
-            shape === "circle" ? "w-16 h-16 rounded-full" : "w-24 h-16 rounded-lg"
+            shape === "circle" ? "w-24 h-24 rounded-full" : "w-32 h-20 rounded-lg"
           }`}
         >
           {preview ? (
@@ -65,7 +65,7 @@ export function PhotoUploadField({
           <p className="text-ink">
             <span className="text-teal">Click to upload</span> or drag and drop
           </p>
-          <p className="text-ink/50 text-xs mt-0.5">JPG, PNG, WEBP, or GIF — up to 5MB</p>
+          <p className="text-ink/50 text-xs mt-0.5">JPG, PNG, WEBP, or GIF â€” up to 5MB</p>
         </div>
       </div>
       <input
@@ -79,3 +79,4 @@ export function PhotoUploadField({
     </div>
   );
 }
+

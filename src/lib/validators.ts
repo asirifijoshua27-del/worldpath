@@ -6,6 +6,14 @@ export const registerSchema = z.object({
   targetLevel: z.enum(["undergrad", "masters", "phd"]),
   targetCountries: z.array(z.string()).min(1, "Choose at least one destination"),
   scholarshipInterest: z.boolean(),
+  currentEducationLevel: z.enum(["shs_graduate", "tertiary", "graduate", "other"]),
+});
+
+export const freeRegisterSchema = z.object({
+  name: z.string().min(2, "Enter your full name"),
+  email: z.string().email("Enter a valid email address"),
+  schoolName: z.string().min(2, "Enter your school's name"),
+  targetCountries: z.array(z.string()).min(1, "Choose at least one destination"),
 });
 
 export const setPasswordSchema = z
@@ -52,7 +60,7 @@ export const boardMemberSchema = z.object({
 });
 
 export const noteSchema = z.object({
-  text: z.string().min(1, "Note cannot be empty"),
+  text: z.string().optional().default(""),
 });
 
 export const createStaffUserSchema = z.object({
