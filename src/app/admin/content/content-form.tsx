@@ -17,6 +17,7 @@ export function ContentForm({
     address: string;
     donateInfo: string;
     logoUrl: string | null;
+    heroImageUrl: string | null;
     caretakingInfo: string;
   };
 }) {
@@ -27,6 +28,22 @@ export function ContentForm({
       <div>
         <span className="block text-sm font-medium mb-1.5">Logo (shown in the site header)</span>
         <PhotoUploadField existingUrl={content.logoUrl} name="logo" hiddenFieldName="existingLogoUrl" />
+      </div>
+
+      <div>
+        <span className="block text-sm font-medium mb-1.5">
+          Homepage hero background (the dark banner behind the headline)
+        </span>
+        <PhotoUploadField
+          existingUrl={content.heroImageUrl}
+          name="hero"
+          hiddenFieldName="existingHeroImageUrl"
+          shape="rect"
+        />
+        <p className="text-xs text-ink/50 mt-1.5">
+          A wide photo works best. It's shown with a dark overlay so the headline text stays readable.
+          Leave empty to keep the plain navy background.
+        </p>
       </div>
 
       <Field label="Organization name">

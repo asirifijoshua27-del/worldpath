@@ -58,6 +58,20 @@ export async function updateSiteContentAction(_prev: FormState, formData: FormDa
     if (existingLogoUrl) await deleteUploadedImage(existingLogoUrl);
   }
 
+  const existingHeroImageUrl = String(formData.get("existingHeroImageUrl") || "");
+  const heroFile = formData.get("hero");
+
+  let heroImageUrl = existingHeroImageUrl;
+  if (heroFile instanceof File && heroFile.size > 0) {
+    try {
+      heroImageUrl = await saveUploadedImage(heroFile);
+    } catch (e) {
+      if (e instanceof UploadError) return { error: e.message };
+      throw e;
+    }
+    if (existingHeroImageUrl) await deleteUploadedImage(existingHeroImageUrl);
+  }
+
   const parsed = siteContentSchema.safeParse({
     orgName: String(formData.get("orgName") || ""),
     tagline: String(formData.get("tagline") || ""),
@@ -69,6 +83,7 @@ export async function updateSiteContentAction(_prev: FormState, formData: FormDa
     donateInfo: String(formData.get("donateInfo") || ""),
     caretakingInfo: String(formData.get("caretakingInfo") || ""),
     logoUrl,
+    heroImageUrl,
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message || "Please check the form." };

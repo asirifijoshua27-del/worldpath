@@ -116,6 +116,7 @@ export interface SiteContentRecord {
   address: string;
   donateInfo: string;
   logoUrl: string | null;
+  heroImageUrl: string | null;
   caretakingInfo: string;
 }
 

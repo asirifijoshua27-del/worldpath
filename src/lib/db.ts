@@ -159,6 +159,7 @@ function migrate(db: DatabaseSync) {
     "ALTER TABLE students ADD COLUMN photoUrl TEXT",
     "ALTER TABLE volunteer_leads ADD COLUMN areasOfInterest TEXT NOT NULL DEFAULT '[]'",
     "ALTER TABLE volunteer_leads ADD COLUMN availability TEXT NOT NULL DEFAULT ''",
+    "ALTER TABLE site_content ADD COLUMN heroImageUrl TEXT",
   ];
   for (const sql of alters) {
     try {

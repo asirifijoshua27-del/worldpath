@@ -303,7 +303,7 @@ export function getSiteContent(): SiteContentRecord {
 export function updateSiteContent(input: Omit<SiteContentRecord, "id">) {
   db()
     .prepare(
-      `UPDATE site_content SET orgName = ?, tagline = ?, mission = ?, vision = ?, contactEmail = ?, contactPhone = ?, address = ?, donateInfo = ?, logoUrl = ?, caretakingInfo = ?
+      `UPDATE site_content SET orgName = ?, tagline = ?, mission = ?, vision = ?, contactEmail = ?, contactPhone = ?, address = ?, donateInfo = ?, logoUrl = ?, heroImageUrl = ?, caretakingInfo = ?
        WHERE id = 1`
     )
     .run(
@@ -316,6 +316,7 @@ export function updateSiteContent(input: Omit<SiteContentRecord, "id">) {
       input.address,
       input.donateInfo,
       input.logoUrl,
+      input.heroImageUrl,
       input.caretakingInfo
     );
 }

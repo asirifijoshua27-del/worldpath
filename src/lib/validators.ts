@@ -42,6 +42,7 @@ export const siteContentSchema = z.object({
   address: z.string().optional().default(""),
   donateInfo: z.string().optional().default(""),
   logoUrl: z.string().optional().default(""),
+  heroImageUrl: z.string().optional().default(""),
   caretakingInfo: z.string().optional().default(""),
 });
 
