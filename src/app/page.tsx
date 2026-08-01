@@ -1,22 +1,56 @@
 ﻿import Link from "next/link";
-import { getSiteContent, listStudents, listStaff } from "@/lib/repo";
+import { getSiteContent, listImpactStories } from "@/lib/repo";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { PathRoute } from "@/components/path-route";
+import { ArrowRight } from "@/components/arrow-right";
 
 export const dynamic = "force-dynamic";
 
+const CREDIBILITY_POINTS = [
+  "One-on-one mentoring",
+  "Scholarship-focused applications",
+  "Student-centered support",
+  "International study pathways",
+];
+
+const WHAT_STUDENTS_RECEIVE = [
+  {
+    title: "A tailored university shortlist",
+    body: "Schools matched to your grades, goals, and budget â€” not a generic list.",
+  },
+  {
+    title: "Personal statement & essay guidance",
+    body: "One-on-one feedback to help your application sound like you, at your best.",
+  },
+  {
+    title: "Scholarship & financial-aid search",
+    body: "We help you find and apply for merit-based and need-based aid, especially in the US.",
+  },
+  {
+    title: "Document review & tracking",
+    body: "Your own portal to track every document and every stage â€” always up to date.",
+  },
+  {
+    title: "Interview preparation",
+    body: "Practice and coaching where an admissions or scholarship interview is required.",
+  },
+];
+
 export default function HomePage() {
   const content = getSiteContent();
-  const studentCount = listStudents().length;
-  const staffCount = listStaff().length;
+  const testimonial = listImpactStories().find((s) => s.featured === 1);
 
   return (
     <>
       <SiteHeader orgName={content.orgName} logoUrl={content.logoUrl} />
       <main className="flex-1">
         {/* Hero â€” full-bleed navy, IvyWise-style */}
-        <section className="relative bg-navy text-paper overflow-hidden">
+        <section
+          className="relative bg-navy text-paper overflow-hidden bg-cover bg-center"
+          style={content.heroImageUrl ? { backgroundImage: `url(${content.heroImageUrl})` } : undefined}
+        >
+          {content.heroImageUrl && <div className="absolute inset-0 bg-navy/75" />}
           <div
             className="absolute inset-0 opacity-40"
             style={{
@@ -38,7 +72,7 @@ export default function HomePage() {
                 href="/register"
                 className="rounded-full bg-teal text-paper px-7 py-3 hover:bg-gold-deep transition-colors"
               >
-                Start your application
+                Get application support
               </Link>
               <Link
                 href="/about"
@@ -53,18 +87,40 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Stats strip */}
+        {/* Credibility strip â€” what we offer, not raw headcounts */}
         <section className="border-b border-line bg-paper-dim">
-          <div className="mx-auto max-w-6xl px-6 py-10 grid grid-cols-2 sm:grid-cols-4 gap-8 text-center">
-            <Stat value={studentCount} label="Students in the program" />
-            <Stat value={staffCount} label="Counselors on staff" />
-            <Stat value="5" label="Study destinations" />
-            <Stat value="Free" label="Via Wesley Senior High School" />
+          <div className="mx-auto max-w-6xl px-6 py-10 grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
+            {CREDIBILITY_POINTS.map((point) => (
+              <div key={point} className="flex flex-col items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-gold-deep" />
+                <p className="text-sm font-medium">{point}</p>
+              </div>
+            ))}
           </div>
           <div className="text-center pb-8">
             <Link href="/impact" className="text-sm text-teal hover:underline">
-              See our full impact & student stories â†’
+              See our impact & student stories
+              <ArrowRight />
             </Link>
+          </div>
+        </section>
+
+        {/* What students receive */}
+        <section className="mx-auto max-w-6xl px-6 py-16 border-b border-line">
+          <p className="uppercase tracking-[0.2em] text-xs text-gold-deep font-medium mb-3">Our services</p>
+          <h2 className="font-display text-3xl mb-10">What students receive</h2>
+          <div className="grid sm:grid-cols-2 gap-x-10 gap-y-8">
+            {WHAT_STUDENTS_RECEIVE.map((item) => (
+              <div key={item.title} className="flex gap-4">
+                <span className="w-6 h-6 rounded-full bg-teal/10 text-teal grid place-items-center shrink-0 mt-0.5 text-xs font-medium">
+                  âœ“
+                </span>
+                <div>
+                  <h3 className="font-medium mb-1">{item.title}</h3>
+                  <p className="text-sm text-ink/70 leading-relaxed">{item.body}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
 
@@ -84,42 +140,39 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Services */}
-        <section className="mx-auto max-w-6xl px-6 py-16 border-b border-line">
-          <p className="uppercase tracking-[0.2em] text-xs text-gold-deep font-medium mb-3">Our services</p>
-          <h2 className="font-display text-3xl mb-10">How we help</h2>
-          <div className="grid sm:grid-cols-3 gap-6">
-            <ServiceCard
-              n="01"
-              title="Application guidance"
-              body="One-on-one support building a competitive undergraduate, master's, or PhD application â€” from school shortlists to essays."
-            />
-            <ServiceCard
-              n="02"
-              title="Scholarship search"
-              body="We help you find and apply for merit-based and need-based scholarships and financial aid, especially across US universities."
-            />
-            <ServiceCard
-              n="03"
-              title="Document & status tracking"
-              body="Your own portal to track every document, every stage, and every note from your counselor â€” always up to date."
-            />
-          </div>
-        </section>
+        {/* Testimonial â€” only shown once a real, permitted story is marked featured in admin */}
+        {testimonial && (
+          <section className="mx-auto max-w-4xl px-6 py-16 border-b border-line">
+            <div className="rounded-2xl border border-gold-deep/30 bg-gold/5 px-8 py-10 sm:px-12 text-center">
+              <p className="font-display text-2xl sm:text-3xl leading-snug text-ink mb-6">
+                &ldquo;{testimonial.story}&rdquo;
+              </p>
+              <p className="text-sm font-medium">{testimonial.studentName}</p>
+              <p className="text-xs text-ink/50 uppercase tracking-wide mt-1">
+                {testimonial.destinationCountry}
+              </p>
+            </div>
+          </section>
+        )}
 
-        {/* Caretaking foundation */}
+        {/* Caretaking foundation â€” short summary, full story lives on its own page */}
         <section className="mx-auto max-w-6xl px-6 py-16 border-b border-line">
           <div className="rounded-2xl bg-navy text-paper px-8 py-10 sm:px-12 sm:py-14">
             <p className="uppercase tracking-[0.2em] text-xs text-paper/60 font-medium mb-3">
               Beyond admissions
             </p>
-            <h2 className="font-display text-2xl mb-3">WorldPath Caretaking Foundation</h2>
-            <p className="text-paper/80 max-w-2xl leading-relaxed mb-6 whitespace-pre-line">
-              {content.caretakingInfo ||
-                "Beyond university placement, our parent foundation supports caretaking homes with food and daily necessities â€” because a student's wellbeing at home is part of their path to university too."}
+            <h2 className="font-display text-2xl mb-3">About the Foundation</h2>
+            <p className="text-paper/80 max-w-2xl leading-relaxed mb-6">
+              WorldPath Caretaking Foundation is the nonprofit organization behind WorldPath Group,
+              supporting education, mentorship, healthcare outreach, and community development across
+              Ghana.
             </p>
-            <Link href="/get-involved" className="text-sm text-paper underline hover:text-teal transition-colors">
-              See how you can help â†’
+            <Link
+              href="/foundation"
+              className="text-sm text-paper underline hover:text-teal transition-colors"
+            >
+              Learn more about the Foundation
+              <ArrowRight />
             </Link>
           </div>
         </section>
@@ -129,7 +182,8 @@ export default function HomePage() {
           <div className="flex items-center justify-between mb-3">
             <p className="uppercase tracking-[0.2em] text-xs text-gold-deep font-medium">From the blog</p>
             <Link href="/blog" className="text-sm text-teal hover:underline">
-              All posts â†’
+              All posts
+              <ArrowRight />
             </Link>
           </div>
           <h2 className="font-display text-2xl mb-3">Guides for applying abroad</h2>
@@ -149,8 +203,8 @@ export default function HomePage() {
               </p>
             </div>
             <div className="sm:text-right">
-              <Link href="/register" className="btn-primary inline-block">
-                Apply now
+              <Link href="/register/free" className="btn-primary inline-block">
+                Apply for WorldPath guidance
               </Link>
             </div>
           </div>
@@ -158,25 +212,6 @@ export default function HomePage() {
       </main>
       <SiteFooter orgName={content.orgName} contactEmail={content.contactEmail} contactPhone={content.contactPhone} address={content.address} />
     </>
-  );
-}
-
-function Stat({ value, label }: { value: string | number; label: string }) {
-  return (
-    <div>
-      <p className="font-display text-3xl sm:text-4xl text-gold-deep">{value}</p>
-      <p className="text-xs sm:text-sm text-ink/60 mt-1">{label}</p>
-    </div>
-  );
-}
-
-function ServiceCard({ n, title, body }: { n: string; title: string; body: string }) {
-  return (
-    <div className="border border-line rounded-xl p-6 hover:border-gold-deep/60 hover:shadow-sm transition-all">
-      <p className="font-display text-sm text-gold-deep mb-3">{n}</p>
-      <h3 className="font-display text-lg mb-2">{title}</h3>
-      <p className="text-sm text-ink/70 leading-relaxed">{body}</p>
-    </div>
   );
 }
 

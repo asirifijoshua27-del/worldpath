@@ -5,6 +5,7 @@ import Link from "next/link";
 import { registerAction, type FormState } from "@/app/actions/auth";
 import { TARGET_LEVELS, TARGET_COUNTRIES, CURRENT_EDUCATION_LEVELS } from "@/types";
 import { PhotoUploadField } from "@/components/photo-upload-field";
+import { ArrowRight } from "@/components/arrow-right";
 
 const initialState: FormState = {};
 
@@ -38,7 +39,8 @@ export default function RegisterPage() {
         <div className="mb-8 rounded-xl border border-gold-deep/30 bg-gold/5 px-4 py-3 text-sm">
           Currently a Senior High School student?{" "}
           <Link href="/register/free" className="text-gold-deep font-medium hover:underline">
-            Apply through our free application program â†’
+            Apply through our free application program
+            <ArrowRight />
           </Link>
         </div>
 

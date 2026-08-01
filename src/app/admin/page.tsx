@@ -1,6 +1,7 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { listStudents, listStaff, listBoardMembers, listUsers } from "@/lib/repo";
 import { APPLICATION_STATUSES } from "@/types";
+import { ArrowRight } from "@/components/arrow-right";
 
 export const dynamic = "force-dynamic";
 
@@ -56,7 +57,8 @@ export default function AdminDashboard() {
             </div>
           </div>
           <Link href="/admin/users" className="inline-block mt-4 text-sm text-teal hover:underline">
-            Manage accounts →
+            Manage accounts
+            <ArrowRight />
           </Link>
         </div>
       </div>
@@ -77,3 +79,4 @@ function Stat({ label, value, href, accent }: { label: string; value: number; hr
     </Link>
   );
 }
+
