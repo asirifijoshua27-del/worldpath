@@ -117,6 +117,14 @@ export interface SiteContentRecord {
   donateInfo: string;
   logoUrl: string | null;
   heroImageUrl: string | null;
+  founderName: string;
+  founderTitle: string;
+  founderBio: string;
+  founderPhotoUrl: string | null;
+  undergradInfo: string;
+  mastersInfo: string;
+  phdInfo: string;
+  scholarshipsInfo: string;
   caretakingInfo: string;
 }
 
@@ -148,7 +156,7 @@ export interface ImpactStoryRecord {
   createdAt: string;
 }
 
-export type LeadType = "volunteer" | "donate" | "apply_interest";
+export type LeadType = "volunteer" | "donate" | "apply_interest" | "contact";
 
 export interface VolunteerLeadRecord {
   id: string;

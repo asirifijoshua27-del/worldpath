@@ -7,6 +7,7 @@ const TYPE_LABEL: Record<string, string> = {
   volunteer: "Volunteer",
   donate: "Donate inquiry",
   apply_interest: "Apply interest",
+  contact: "Contact form",
 };
 
 export default function AdminLeadsPage() {

@@ -37,6 +37,14 @@ const WHAT_STUDENTS_RECEIVE = [
   },
 ];
 
+const HOW_IT_WORKS = [
+  { title: "Apply online", body: "Create your account and tell us about your goals." },
+  { title: "Meet an advisor", body: "We match you with a counselor to plan your path." },
+  { title: "Prepare documents", body: "Essays, transcripts, and recommendations â€” reviewed together." },
+  { title: "Submit applications", body: "We help you apply to universities and scholarships on time." },
+  { title: "Track results", body: "Follow every stage from your own student portal." },
+];
+
 export default function HomePage() {
   const content = getSiteContent();
   const testimonial = listImpactStories().find((s) => s.featured === 1);
@@ -124,6 +132,21 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* How it works */}
+        <section className="mx-auto max-w-6xl px-6 py-16 border-b border-line">
+          <p className="uppercase tracking-[0.2em] text-xs text-gold-deep font-medium mb-3">The process</p>
+          <h2 className="font-display text-3xl mb-10">How it works</h2>
+          <div className="grid sm:grid-cols-5 gap-6">
+            {HOW_IT_WORKS.map((step, i) => (
+              <div key={step.title}>
+                <span className="font-display text-2xl text-gold-deep">{i + 1}</span>
+                <h3 className="font-medium mt-2 mb-1">{step.title}</h3>
+                <p className="text-sm text-ink/70 leading-relaxed">{step.body}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* Mission */}
         <section className="mx-auto max-w-6xl px-6 py-16 border-b border-line">
           <div className="grid sm:grid-cols-2 gap-10">
@@ -139,6 +162,32 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+
+        {/* Founder */}
+        {content.founderName && (
+          <section className="mx-auto max-w-4xl px-6 py-16 border-b border-line">
+            <p className="uppercase tracking-[0.2em] text-xs text-gold-deep font-medium mb-6 text-center sm:text-left">
+              Leadership
+            </p>
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 text-center sm:text-left">
+              <div className="w-32 h-32 rounded-full bg-paper-dim border border-line overflow-hidden shrink-0">
+                {content.founderPhotoUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={content.founderPhotoUrl} alt={content.founderName} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full grid place-items-center text-3xl text-ink/30 font-display">
+                    {content.founderName.charAt(0)}
+                  </div>
+                )}
+              </div>
+              <div>
+                <h2 className="font-display text-2xl mb-1">{content.founderName}</h2>
+                <p className="text-teal text-sm font-medium mb-4">{content.founderTitle}</p>
+                <p className="text-ink/80 leading-relaxed max-w-xl">{content.founderBio}</p>
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* Testimonial â€” only shown once a real, permitted story is marked featured in admin */}
         {testimonial && (
