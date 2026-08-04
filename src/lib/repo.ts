@@ -1,4 +1,4 @@
-﻿import { db, newId, nowIso, nextStudentCode } from "@/lib/db";
+﻿import { db, newId, nowIso, nextStudentCode, withForeignKeysOff } from "@/lib/db";
 import type {
   UserRecord,
   StaffProfileRecord,
@@ -40,6 +40,53 @@ export function getUserById(id: string): UserRecord | undefined {
 
 export function listUsers(): UserRecord[] {
   return db().prepare("SELECT * FROM users ORDER BY createdAt DESC").all() as unknown as UserRecord[];
+}
+
+export function countAdmins(): number {
+  const row = db().prepare("SELECT COUNT(*) as count FROM users WHERE role = 'admin'").get() as
+    | { count: number }
+    | undefined;
+  return row?.count ?? 0;
+}
+
+/**
+ * Deletes a user account and whatever it owns: for staff, their public
+ * profile (and unassigns any students); for students, their application
+ * record. Messages the account authored are kept for the record â€” see
+ * listNotesForStudent â€” rather than deleted.
+ */
+export function deleteUserAccount(userId: string): { staffPhotoUrl: string | null; studentPhotoUrl: string | null; documentUrls: string[] } {
+  const database = db();
+  let staffPhotoUrl: string | null = null;
+  let studentPhotoUrl: string | null = null;
+  let documentUrls: string[] = [];
+
+  withForeignKeysOff(() => {
+    const staff = database.prepare("SELECT * FROM staff_profiles WHERE userId = ?").get(userId) as
+      | StaffProfileRecord
+      | undefined;
+    if (staff) {
+      staffPhotoUrl = staff.photoUrl;
+      database.prepare("UPDATE students SET assignedStaffId = NULL WHERE assignedStaffId = ?").run(staff.id);
+      database.prepare("DELETE FROM staff_profiles WHERE id = ?").run(staff.id);
+    }
+
+    const student = database.prepare("SELECT * FROM students WHERE userId = ?").get(userId) as
+      | StudentRecord
+      | undefined;
+    if (student) {
+      studentPhotoUrl = student.photoUrl;
+      documentUrls = (JSON.parse(student.documents) as { fileUrl?: string | null }[])
+        .map((d) => d.fileUrl)
+        .filter((u): u is string => Boolean(u));
+      database.prepare("DELETE FROM students WHERE id = ?").run(student.id);
+    }
+
+    database.prepare("DELETE FROM email_verifications WHERE userId = ?").run(userId);
+    database.prepare("DELETE FROM users WHERE id = ?").run(userId);
+  });
+
+  return { staffPhotoUrl, studentPhotoUrl, documentUrls };
 }
 
 export function createUser(input: {
@@ -279,8 +326,9 @@ export function listNotesForStudent(
 ): (StudentNoteRecord & { authorName: string; authorRole: Role })[] {
   return db()
     .prepare(
-      `SELECT n.*, u.name as authorName, u.role as authorRole FROM student_notes n
-       JOIN users u ON u.id = n.authorId
+      `SELECT n.*, COALESCE(u.name, 'Former team member') as authorName, COALESCE(u.role, 'staff') as authorRole
+       FROM student_notes n
+       LEFT JOIN users u ON u.id = n.authorId
        WHERE n.studentId = ? ORDER BY n.createdAt ASC`
     )
     .all(studentId) as unknown as (StudentNoteRecord & { authorName: string; authorRole: Role })[];

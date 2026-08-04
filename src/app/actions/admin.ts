@@ -22,6 +22,8 @@ import {
   getUserByUsername,
   getStudentById,
   getUserById,
+  countAdmins,
+  deleteUserAccount,
 } from "@/lib/repo";
 import {
   siteContentSchema,
@@ -294,5 +296,65 @@ export async function emailStudentAction(studentId: string, _prev: FormState, fo
   }
 
   return { success: `Email sent to ${user.email}.` };
+}
+
+export async function emailStaffAction(staffId: string, _prev: FormState, formData: FormData): Promise<FormState> {
+  await requireAdmin();
+
+  const staff = getStaffById(staffId);
+  if (!staff) {
+    return { error: "Staff member not found." };
+  }
+  const user = staff.userId ? getUserById(staff.userId) : undefined;
+  if (!user) {
+    return { error: "This staff member doesn't have a linked login account yet, so there's no email to send to." };
+  }
+
+  const parsed = adminEmailSchema.safeParse({
+    subject: String(formData.get("subject") || ""),
+    body: String(formData.get("body") || ""),
+  });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message || "Please check the form." };
+  }
+
+  try {
+    await sendAdminEmail(user.email, parsed.data.subject, parsed.data.body);
+  } catch (e) {
+    if (e instanceof EmailSendError) return { error: e.message };
+    throw e;
+  }
+
+  return { success: `Email sent to ${user.email}.` };
+}
+
+export async function deleteUserAction(userId: string): Promise<void> {
+  const session = await requireAdmin();
+
+  if (userId === session.userId) {
+    throw new Error("You can't delete your own account while logged in as it.");
+  }
+
+  const target = getUserById(userId);
+  if (!target) {
+    throw new Error("Account not found.");
+  }
+  if (target.role === "admin" && countAdmins() <= 1) {
+    throw new Error("You can't delete the last remaining admin account.");
+  }
+
+  const { staffPhotoUrl, studentPhotoUrl, documentUrls } = deleteUserAccount(userId);
+
+  // Clean up any files this account owned, now that the DB rows are gone.
+  await deleteUploadedImage(staffPhotoUrl);
+  await deleteUploadedImage(studentPhotoUrl);
+  for (const url of documentUrls) {
+    await deleteUploadedImage(url);
+  }
+
+  revalidatePath("/admin/users");
+  revalidatePath("/admin/staff");
+  revalidatePath("/admin/students");
+  revalidatePath("/about");
 }
 

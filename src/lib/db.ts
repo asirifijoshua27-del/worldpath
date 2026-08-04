@@ -249,6 +249,22 @@ export function db(): PlainDb {
   return wrapDb(getDb());
 }
 
+/**
+ * Temporarily disables foreign key enforcement, runs fn, then re-enables it.
+ * Used only for account deletion: a deleted staff/admin's authored messages
+ * are kept (for the student's record) rather than deleted, which would
+ * otherwise violate the foreign key on student_notes.authorId.
+ */
+export function withForeignKeysOff<T>(fn: () => T): T {
+  const raw = getDb();
+  raw.exec("PRAGMA foreign_keys = OFF;");
+  try {
+    return fn();
+  } finally {
+    raw.exec("PRAGMA foreign_keys = ON;");
+  }
+}
+
 export function nowIso(): string {
   return new Date().toISOString();
 }
