@@ -42,6 +42,15 @@ export const siteContentSchema = z.object({
   address: z.string().optional().default(""),
   donateInfo: z.string().optional().default(""),
   logoUrl: z.string().optional().default(""),
+  heroImageUrl: z.string().optional().default(""),
+  founderName: z.string().optional().default(""),
+  founderTitle: z.string().optional().default(""),
+  founderBio: z.string().optional().default(""),
+  founderPhotoUrl: z.string().optional().default(""),
+  undergradInfo: z.string().optional().default(""),
+  mastersInfo: z.string().optional().default(""),
+  phdInfo: z.string().optional().default(""),
+  scholarshipsInfo: z.string().optional().default(""),
   caretakingInfo: z.string().optional().default(""),
 });
 
@@ -94,7 +103,7 @@ export const impactStorySchema = z.object({
 
 export const leadSchema = z
   .object({
-    type: z.enum(["volunteer", "donate", "apply_interest"]),
+    type: z.enum(["volunteer", "donate", "apply_interest", "contact"]),
     name: z.string().min(2, "Enter your name"),
     email: z.string().email("Enter a valid email address"),
     phone: z.string().optional().default(""),
@@ -102,7 +111,7 @@ export const leadSchema = z
     areasOfInterest: z.array(z.string()).optional().default([]),
     availability: z.string().optional().default(""),
   })
-  .refine((data) => data.type !== "donate" || data.message.trim().length > 0, {
+  .refine((data) => !["donate", "contact"].includes(data.type) || data.message.trim().length > 0, {
     message: "Please add a short message",
     path: ["message"],
   })

@@ -19,6 +19,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/blog`, changeFrequency: "daily", priority: 0.8 },
     { url: `${base}/register`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${base}/register/free`, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${base}/programs/undergraduate`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${base}/programs/masters`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${base}/programs/phd`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${base}/scholarships`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${base}/contact`, changeFrequency: "monthly", priority: 0.5 },
   ];
 
   const postRoutes: MetadataRoute.Sitemap = listPublishedPosts().map((post) => ({
