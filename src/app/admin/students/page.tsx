@@ -11,6 +11,7 @@ export default function AdminStudentsPage() {
     const user = getUserById(s.userId);
     return {
       id: s.id,
+      userId: s.userId,
       code: s.code,
       name: user?.name || "â€”",
       email: user?.email || "â€”",

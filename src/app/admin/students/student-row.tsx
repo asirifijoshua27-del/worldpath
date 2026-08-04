@@ -2,9 +2,10 @@
 
 import { useRef } from "react";
 import Link from "next/link";
-import { assignStudentAction, adminUpdateStatusAction } from "@/app/actions/admin";
+import { assignStudentAction, adminUpdateStatusAction, deleteUserAction } from "@/app/actions/admin";
 import { APPLICATION_STATUSES } from "@/types";
 import { PhotoLightbox } from "@/components/photo-lightbox";
+import { DeleteButton } from "@/components/delete-button";
 
 export function StudentRow({
   student,
@@ -12,6 +13,7 @@ export function StudentRow({
 }: {
   student: {
     id: string;
+    userId: string;
     code: string;
     name: string;
     email: string;
@@ -92,9 +94,16 @@ export function StudentRow({
         </form>
       </td>
       <td className="py-3 pr-4 text-right">
-        <Link href={`/admin/students/${student.id}`} className="text-teal hover:underline text-xs">
-          Details
-        </Link>
+        <div className="flex items-center justify-end gap-3">
+          <Link href={`/admin/students/${student.id}`} className="text-teal hover:underline text-xs">
+            Details
+          </Link>
+          <DeleteButton
+            id={student.userId}
+            action={deleteUserAction}
+            confirmLabel={`Delete ${student.name}'s account? This removes their login and entire application record. This can't be undone.`}
+          />
+        </div>
       </td>
     </tr>
   );

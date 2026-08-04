@@ -5,6 +5,8 @@ import type { DocumentItem } from "@/types";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { MessageThread } from "@/components/message-thread";
 import { EmailStudentForm } from "./email-student-form";
+import { DeleteButton } from "@/components/delete-button";
+import { deleteUserAction } from "@/app/actions/admin";
 
 export const dynamic = "force-dynamic";
 
@@ -109,6 +111,21 @@ export default async function AdminStudentDetailPage({ params }: { params: Promi
         <h2 className="font-display text-xl mb-4">Email this student</h2>
         {user && <EmailStudentForm studentId={student.id} studentEmail={user.email} />}
       </div>
+
+      {user && (
+        <div className="mt-12 pt-8 border-t border-line max-w-lg">
+          <h2 className="font-display text-xl mb-2 text-red-700">Danger zone</h2>
+          <p className="text-sm text-ink/60 mb-4">
+            Deletes {user.name}'s login and their application record, including documents and message
+            history. This can't be undone.
+          </p>
+          <DeleteButton
+            id={user.id}
+            action={deleteUserAction}
+            confirmLabel={`Delete ${user.name}'s account? This removes their login and their entire application record. This can't be undone.`}
+          />
+        </div>
+      )}
     </div>
   );
 }
