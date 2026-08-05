@@ -1,4 +1,149 @@
-﻿"use server";
+# WorldPath Group - add file attachments to the admin email feature
+# (emailing students and staff directly can now include a document,
+# up to 8MB, sent via Resend)
+# Run this from inside your worldpath project folder (where package.json lives)
+
+$ErrorActionPreference = 'Stop'
+
+New-Item -ItemType Directory -Force -Path "src/lib" | Out-Null
+@'
+import { Resend } from "resend";
+
+// Sends the email-verification link via Resend when RESEND_API_KEY is set.
+// Without it (e.g. local development), the link is logged to the server
+// console instead, so registration is always testable even with zero
+// email setup.
+
+function logToConsole(to: string, name: string, verifyUrl: string) {
+  console.log("\n================ WorldPath Group: verification email ================");
+  console.log(`To: ${to}`);
+  console.log(`Hi ${name}, verify your email and set your password here:`);
+  console.log(verifyUrl);
+  console.log("=======================================================================\n");
+}
+
+function emailHtml(name: string, verifyUrl: string): string {
+  return `
+  <div style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;color:#0a2e3d;">
+    <p style="text-transform:uppercase;letter-spacing:0.15em;font-size:11px;color:#0b5c73;font-weight:600;margin:0 0 16px;">
+      WorldPath Group
+    </p>
+    <h1 style="font-size:22px;margin:0 0 16px;">Verify your email</h1>
+    <p style="font-size:15px;line-height:1.6;color:#0a2e3d;">Hi ${name},</p>
+    <p style="font-size:15px;line-height:1.6;color:#0a2e3d;">
+      Thanks for registering with WorldPath Group. Click the button below to verify your
+      email address and set your password.
+    </p>
+    <p style="margin:28px 0;">
+      <a href="${verifyUrl}"
+         style="background:#0f6e8c;color:#ffffff;text-decoration:none;padding:12px 28px;border-radius:999px;font-size:15px;display:inline-block;">
+        Verify email &amp; set password
+      </a>
+    </p>
+    <p style="font-size:13px;line-height:1.6;color:#0a2e3d99;">
+      Or copy and paste this link into your browser:<br />
+      <span style="word-break:break-all;">${verifyUrl}</span>
+    </p>
+    <p style="font-size:13px;color:#0a2e3d66;margin-top:32px;">
+      If you didn't create an account with WorldPath Group, you can safely ignore this email.
+    </p>
+  </div>`;
+}
+
+function emailText(name: string, verifyUrl: string): string {
+  return `Hi ${name},\n\nThanks for registering with WorldPath Group. Verify your email and set your password here:\n${verifyUrl}\n\nIf you didn't create an account with WorldPath Group, you can safely ignore this email.`;
+}
+
+export async function sendVerificationEmail(to: string, name: string, verifyUrl: string) {
+  const apiKey = process.env.RESEND_API_KEY;
+  const fromEmail = process.env.RESEND_FROM_EMAIL || "WorldPath Group <onboarding@resend.dev>";
+
+  if (!apiKey) {
+    logToConsole(to, name, verifyUrl);
+    return;
+  }
+
+  const resend = new Resend(apiKey);
+  try {
+    const { error } = await resend.emails.send({
+      from: fromEmail,
+      to,
+      subject: "Verify your WorldPath Group account",
+      html: emailHtml(name, verifyUrl),
+      text: emailText(name, verifyUrl),
+    });
+    if (error) {
+      console.error("Resend failed to send verification email:", error);
+      logToConsole(to, name, verifyUrl); // don't leave the student stuck
+    }
+  } catch (err) {
+    console.error("Error sending verification email via Resend:", err);
+    logToConsole(to, name, verifyUrl);
+  }
+}
+
+export class EmailSendError extends Error {}
+
+function adminEmailHtml(body: string): string {
+  const paragraphs = body
+    .split("\n")
+    .filter((line) => line.trim())
+    .map((line) => `<p style="font-size:15px;line-height:1.6;color:#0a2e3d;margin:0 0 14px;">${line}</p>`)
+    .join("");
+  return `
+  <div style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;color:#0a2e3d;">
+    <p style="text-transform:uppercase;letter-spacing:0.15em;font-size:11px;color:#0b5c73;font-weight:600;margin:0 0 16px;">
+      WorldPath Group
+    </p>
+    ${paragraphs}
+  </div>`;
+}
+
+/**
+ * General-purpose email sender used by the admin portal to message a
+ * student directly. Throws EmailSendError if RESEND_API_KEY isn't
+ * configured or the send fails, so the caller can show the admin a real
+ * error rather than silently pretending it worked.
+ */
+export async function sendAdminEmail(
+  to: string,
+  subject: string,
+  body: string,
+  attachment?: { filename: string; content: Buffer } | null
+) {
+  const apiKey = process.env.RESEND_API_KEY;
+  const fromEmail = process.env.RESEND_FROM_EMAIL || "WorldPath Group <onboarding@resend.dev>";
+
+  if (!apiKey) {
+    throw new EmailSendError(
+      "Email sending isn't configured yet (no RESEND_API_KEY set). This message wasn't sent."
+    );
+  }
+
+  const resend = new Resend(apiKey);
+  try {
+    const { error } = await resend.emails.send({
+      from: fromEmail,
+      to,
+      subject,
+      html: adminEmailHtml(body),
+      text: body,
+      attachments: attachment ? [{ filename: attachment.filename, content: attachment.content }] : undefined,
+    });
+    if (error) {
+      throw new EmailSendError(error.message || "Resend rejected this email.");
+    }
+  } catch (err) {
+    if (err instanceof EmailSendError) throw err;
+    throw new EmailSendError("Could not send email. Please try again.");
+  }
+}
+
+'@ | Set-Content -LiteralPath "src/lib/email.ts" -Encoding utf8
+
+New-Item -ItemType Directory -Force -Path "src/app/actions" | Out-Null
+@'
+"use server";
 
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
@@ -380,3 +525,100 @@ export async function deleteUserAction(userId: string): Promise<void> {
   revalidatePath("/about");
 }
 
+'@ | Set-Content -LiteralPath "src/app/actions/admin.ts" -Encoding utf8
+
+New-Item -ItemType Directory -Force -Path "src/app/admin/students/[id]" | Out-Null
+@'
+"use client";
+
+import { useActionState } from "react";
+import { emailStudentAction, type FormState } from "@/app/actions/admin";
+
+export function EmailStudentForm({ studentId, studentEmail }: { studentId: string; studentEmail: string }) {
+  const action = emailStudentAction.bind(null, studentId);
+  const [state, formAction, pending] = useActionState<FormState, FormData>(action, {});
+
+  return (
+    <form action={formAction} className="space-y-4 max-w-lg">
+      <p className="text-sm text-ink/60">Sending to {studentEmail}</p>
+      <label className="block">
+        <span className="block text-sm font-medium mb-1.5">Subject</span>
+        <input name="subject" required className="input" />
+      </label>
+      <label className="block">
+        <span className="block text-sm font-medium mb-1.5">Message</span>
+        <textarea name="body" required rows={6} className="input" />
+      </label>
+      <label className="block">
+        <span className="block text-sm font-medium mb-1.5">Attachment (optional)</span>
+        <input
+          name="attachment"
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/gif,application/pdf,.doc,.docx"
+          className="input"
+        />
+        <span className="block text-xs text-ink/50 mt-1">Up to 8MB.</span>
+      </label>
+
+      {state.error && <p className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-4 py-3">{state.error}</p>}
+      {state.success && <p className="text-sm text-teal bg-teal/10 border border-teal/30 rounded-lg px-4 py-3">{state.success}</p>}
+
+      <button type="submit" disabled={pending} className="btn-primary disabled:opacity-60">
+        {pending ? "Sending..." : "Send email"}
+      </button>
+    </form>
+  );
+}
+
+'@ | Set-Content -LiteralPath "src/app/admin/students/[id]/email-student-form.tsx" -Encoding utf8
+
+New-Item -ItemType Directory -Force -Path "src/app/admin/staff/[id]" | Out-Null
+@'
+"use client";
+
+import { useActionState } from "react";
+import { emailStaffAction, type FormState } from "@/app/actions/admin";
+
+export function EmailStaffForm({ staffId, staffEmail }: { staffId: string; staffEmail: string }) {
+  const action = emailStaffAction.bind(null, staffId);
+  const [state, formAction, pending] = useActionState<FormState, FormData>(action, {});
+
+  return (
+    <form action={formAction} className="space-y-4 max-w-lg">
+      <p className="text-sm text-ink/60">Sending to {staffEmail}</p>
+      <label className="block">
+        <span className="block text-sm font-medium mb-1.5">Subject</span>
+        <input name="subject" required className="input" />
+      </label>
+      <label className="block">
+        <span className="block text-sm font-medium mb-1.5">Message</span>
+        <textarea name="body" required rows={6} className="input" />
+      </label>
+      <label className="block">
+        <span className="block text-sm font-medium mb-1.5">Attachment (optional)</span>
+        <input
+          name="attachment"
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/gif,application/pdf,.doc,.docx"
+          className="input"
+        />
+        <span className="block text-xs text-ink/50 mt-1">Up to 8MB.</span>
+      </label>
+
+      {state.error && <p className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-4 py-3">{state.error}</p>}
+      {state.success && <p className="text-sm text-teal bg-teal/10 border border-teal/30 rounded-lg px-4 py-3">{state.success}</p>}
+
+      <button type="submit" disabled={pending} className="btn-primary disabled:opacity-60">
+        {pending ? "Sending..." : "Send email"}
+      </button>
+    </form>
+  );
+}
+
+'@ | Set-Content -LiteralPath "src/app/admin/staff/[id]/email-staff-form.tsx" -Encoding utf8
+
+git add -A
+git commit -m "Add file attachment support to admin email feature"
+git push
+
+Write-Host 'Done. Files written and pushed.'

@@ -96,7 +96,12 @@ function adminEmailHtml(body: string): string {
  * configured or the send fails, so the caller can show the admin a real
  * error rather than silently pretending it worked.
  */
-export async function sendAdminEmail(to: string, subject: string, body: string) {
+export async function sendAdminEmail(
+  to: string,
+  subject: string,
+  body: string,
+  attachment?: { filename: string; content: Buffer } | null
+) {
   const apiKey = process.env.RESEND_API_KEY;
   const fromEmail = process.env.RESEND_FROM_EMAIL || "WorldPath Group <onboarding@resend.dev>";
 
@@ -114,6 +119,7 @@ export async function sendAdminEmail(to: string, subject: string, body: string) 
       subject,
       html: adminEmailHtml(body),
       text: body,
+      attachments: attachment ? [{ filename: attachment.filename, content: attachment.content }] : undefined,
     });
     if (error) {
       throw new EmailSendError(error.message || "Resend rejected this email.");

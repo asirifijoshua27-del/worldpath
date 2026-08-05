@@ -18,6 +18,16 @@ export function EmailStudentForm({ studentId, studentEmail }: { studentId: strin
         <span className="block text-sm font-medium mb-1.5">Message</span>
         <textarea name="body" required rows={6} className="input" />
       </label>
+      <label className="block">
+        <span className="block text-sm font-medium mb-1.5">Attachment (optional)</span>
+        <input
+          name="attachment"
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/gif,application/pdf,.doc,.docx"
+          className="input"
+        />
+        <span className="block text-xs text-ink/50 mt-1">Up to 8MB.</span>
+      </label>
 
       {state.error && <p className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-4 py-3">{state.error}</p>}
       {state.success && <p className="text-sm text-teal bg-teal/10 border border-teal/30 rounded-lg px-4 py-3">{state.success}</p>}
