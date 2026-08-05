@@ -19,7 +19,7 @@ export default function PhdPage() {
       eyebrow="PhD"
       title="PhD applications"
       body={content.phdInfo}
-      fallback="We support Ghanaian students pursuing doctoral study abroad â€” from identifying the right advisors and programs to preparing research proposals and securing funding."
+ fallback="We support Ghanaian students pursuing doctoral study abroad - from identifying the right advisors and programs to preparing research proposals and securing funding."
     />
   );
 }

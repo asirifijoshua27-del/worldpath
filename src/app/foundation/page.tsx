@@ -27,7 +27,7 @@ export default function FoundationPage() {
           <h1 className="font-display text-4xl mt-4 mb-8">WorldPath Caretaking Foundation</h1>
           <p className="text-lg text-ink/80 leading-relaxed whitespace-pre-line">
             {content.caretakingInfo ||
-              "Beyond university placement, our parent foundation supports caretaking homes with food and daily necessities â€” because a student's wellbeing at home is part of their path to university too."}
+ "Beyond university placement, our parent foundation supports caretaking homes with food and daily necessities - because a student's wellbeing at home is part of their path to university too."}
           </p>
 
           <div className="mt-12 pt-8 border-t border-line">

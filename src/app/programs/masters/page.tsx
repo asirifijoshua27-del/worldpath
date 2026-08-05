@@ -19,7 +19,7 @@ export default function MastersPage() {
       eyebrow="Master's"
       title="Master's applications"
       body={content.mastersInfo}
-      fallback="We support Ghanaian graduates applying for master's programs abroad â€” from selecting programs aligned with your career goals to strengthening your statement of purpose and finding funding."
+ fallback="We support Ghanaian graduates applying for master's programs abroad - from selecting programs aligned with your career goals to strengthening your statement of purpose and finding funding."
     />
   );
 }

@@ -41,7 +41,7 @@ export default async function StudentHomePage() {
       </div>
       <h1 className="font-display text-3xl mb-2">Welcome, {session?.name}</h1>
       <p className="text-ink/60 mb-10">
-        {staff ? `Your counselor is ${staff.name}.` : "A counselor hasn't been assigned yet â€” one will be soon."}
+ {staff ? `Your counselor is ${staff.name}.` : "A counselor hasn't been assigned yet - one will be soon."}
       </p>
 
       <div className="grid sm:grid-cols-2 gap-6 mb-10">

@@ -33,7 +33,7 @@ export default function BlogIndexPage() {
         <section className="mx-auto max-w-5xl px-6 pb-20">
           {posts.length === 0 ? (
             <p className="text-sm text-ink/50 italic border border-dashed border-line rounded-xl p-6">
-              No posts published yet â€” check back soon.
+ No posts published yet - check back soon.
             </p>
           ) : (
             <div className="grid sm:grid-cols-2 gap-8">

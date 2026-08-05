@@ -21,7 +21,7 @@ export async function submitLeadAction(_prev: FormState, formData: FormData): Pr
     return { error: parsed.error.issues[0]?.message || "Please check the form." };
   }
   createLead(parsed.data);
-  return { success: "Thanks â€” we'll be in touch soon." };
+ return { success: "Thanks - we'll be in touch soon." };
 }
 
 export async function markLeadHandledAction(formData: FormData) {

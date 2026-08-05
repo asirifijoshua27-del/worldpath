@@ -19,7 +19,7 @@ export default function ScholarshipsPage() {
       eyebrow="Funding"
       title="Scholarships & financial aid"
       body={content.scholarshipsInfo}
-      fallback="We help you find and apply for merit-based and need-based scholarships and financial aid â€” especially at US universities, where most funding decisions are made as part of the admissions process itself."
+ fallback="We help you find and apply for merit-based and need-based scholarships and financial aid - especially at US universities, where most funding decisions are made as part of the admissions process itself."
     />
   );
 }

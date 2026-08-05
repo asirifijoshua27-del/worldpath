@@ -65,7 +65,7 @@ export function PhotoUploadField({
           <p className="text-ink">
             <span className="text-teal">Click to upload</span> or drag and drop
           </p>
-          <p className="text-ink/50 text-xs mt-0.5">JPG, PNG, WEBP, or GIF â€” up to 5MB</p>
+ <p className="text-ink/50 text-xs mt-0.5">JPG, PNG, WEBP, or GIF - up to 5MB</p>
         </div>
       </div>
       <input

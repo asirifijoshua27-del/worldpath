@@ -12,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const content = getSiteContent();
   return {
     title: `Get Involved | ${content.orgName}`,
-    description: "Donate, volunteer, or apply â€” ways to get involved with WorldPath Group.",
+ description: "Donate, volunteer, or apply - ways to get involved with WorldPath Group.",
   };
 }
 
@@ -27,7 +27,7 @@ export default function GetInvolvedPage() {
           <p className="uppercase tracking-[0.25em] text-xs text-gold-deep font-medium">Get involved</p>
           <h1 className="font-display text-4xl sm:text-5xl mt-5">Three ways to help open a door</h1>
           <p className="mt-6 text-lg text-ink/70 max-w-xl mx-auto">
-            Donate, volunteer your time and expertise, or â€” if you're a student â€” apply for support.
+ Donate, volunteer your time and expertise, or - if you're a student - apply for support.
           </p>
         </section>
 

@@ -6,7 +6,10 @@ import { uploadDir } from "@/lib/uploads";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const size = { width: 32, height: 32 };
+// Google requires at least 48x48 to reliably show a favicon in search
+// results at all (smaller sizes often just fall back to a generic globe
+// icon) â€” 128x128 gives good headroom and stays sharp on high-DPI screens.
+export const size = { width: 128, height: 128 };
 export const contentType = "image/png";
 
 async function logoDataUri(logoUrl: string | null): Promise<string | null> {
@@ -42,9 +45,9 @@ export default async function Icon() {
       >
         {logo ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={logo} width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover" }} />
+          <img src={logo} width={128} height={128} style={{ borderRadius: "50%", objectFit: "cover" }} />
         ) : (
-          <span style={{ color: "#faf8f4", fontSize: 20 }}>W</span>
+          <span style={{ color: "#faf8f4", fontSize: 72 }}>W</span>
         )}
       </div>
     ),

@@ -19,7 +19,7 @@ export default function UndergraduatePage() {
       eyebrow="Undergraduate"
       title="Undergraduate applications"
       body={content.undergradInfo}
-      fallback="We help Ghanaian students build a competitive undergraduate application â€” from choosing the right universities to writing standout essays and finding scholarships to make it affordable."
+ fallback="We help Ghanaian students build a competitive undergraduate application - from choosing the right universities to writing standout essays and finding scholarships to make it affordable."
     />
   );
 }

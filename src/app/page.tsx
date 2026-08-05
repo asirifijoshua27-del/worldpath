@@ -17,7 +17,7 @@ const CREDIBILITY_POINTS = [
 const WHAT_STUDENTS_RECEIVE = [
   {
     title: "A tailored university shortlist",
-    body: "Schools matched to your grades, goals, and budget â€” not a generic list.",
+ body: "Schools matched to your grades, goals, and budget - not a generic list.",
   },
   {
     title: "Personal statement & essay guidance",
@@ -29,7 +29,7 @@ const WHAT_STUDENTS_RECEIVE = [
   },
   {
     title: "Document review & tracking",
-    body: "Your own portal to track every document and every stage â€” always up to date.",
+ body: "Your own portal to track every document and every stage - always up to date.",
   },
   {
     title: "Interview preparation",
@@ -40,7 +40,7 @@ const WHAT_STUDENTS_RECEIVE = [
 const HOW_IT_WORKS = [
   { title: "Apply online", body: "Create your account and tell us about your goals." },
   { title: "Meet an advisor", body: "We match you with a counselor to plan your path." },
-  { title: "Prepare documents", body: "Essays, transcripts, and recommendations â€” reviewed together." },
+ { title: "Prepare documents", body: "Essays, transcripts, and recommendations - reviewed together." },
   { title: "Submit applications", body: "We help you apply to universities and scholarships on time." },
   { title: "Track results", body: "Follow every stage from your own student portal." },
 ];

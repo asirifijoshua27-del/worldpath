@@ -33,7 +33,7 @@ export default function ImpactPage() {
             <p className="uppercase tracking-[0.25em] text-xs text-paper/70 font-medium">Our impact</p>
             <h1 className="font-display text-4xl sm:text-5xl mt-5">Real students. Real universities.</h1>
             <p className="mt-6 text-lg text-paper/75 max-w-xl mx-auto">
-              Every number here reflects a student who is currently in our program right now â€” not a
+ Every number here reflects a student who is currently in our program right now - not a
               marketing estimate.
             </p>
           </div>
