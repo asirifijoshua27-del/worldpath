@@ -1,4 +1,79 @@
-﻿import Link from "next/link";
+# WorldPath Group - two fixes:
+# 1. Journey-path graphic for 'How it works' (inspired by a design you liked)
+# 2. Fixed a second garbled-character bug: the checkmark icon in 'What
+#    students receive' was showing as 'a...s' due to a copy-paste encoding
+#    issue. Replaced it with a real SVG icon so this can't happen again
+#    (same fix already applied to the arrow icons earlier).
+# Run this from inside your worldpath project folder (where package.json lives)
+
+$ErrorActionPreference = 'Stop'
+
+New-Item -ItemType Directory -Force -Path "src/components" | Out-Null
+@'
+export function CheckIcon({ className = "w-3.5 h-3.5" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" className={className} aria-hidden="true">
+      <path
+        d="M4 10.5L8 14.5L16 6"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+'@ | Set-Content -LiteralPath "src/components/check-icon.tsx" -Encoding utf8
+
+New-Item -ItemType Directory -Force -Path "src/components" | Out-Null
+@'
+interface JourneyStep {
+  title: string;
+  body: string;
+}
+
+export function JourneyPath({ steps }: { steps: JourneyStep[] }) {
+  return (
+    <div className="w-full overflow-x-auto">
+      <div className="relative min-w-[900px] pt-6 pb-2">
+        <svg
+          viewBox="0 0 1000 60"
+          preserveAspectRatio="none"
+          className="absolute left-0 right-0 top-10 w-full h-16 pointer-events-none"
+          aria-hidden="true"
+        >
+          <path
+            d="M20,30 C 120,-10 130,70 230,30 C 330,-10 340,70 440,30 C 540,-10 550,70 650,30 C 750,-10 760,70 860,30 C 900,10 940,30 980,30"
+            fill="none"
+            stroke="var(--color-teal)"
+            strokeOpacity="0.5"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          />
+        </svg>
+        <div className="relative flex justify-between">
+          {steps.map((step, i) => (
+            <div
+              key={step.title}
+              className={`flex flex-col items-center text-center w-[180px] ${i % 2 === 1 ? "mt-10" : ""}`}
+            >
+              <span className="w-4 h-4 rounded-full bg-gold-deep border-2 border-paper" />
+              <p className="font-display text-base mt-3 mb-1">{step.title}</p>
+              <p className="text-xs text-ink/60 leading-relaxed">{step.body}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+'@ | Set-Content -LiteralPath "src/components/journey-path.tsx" -Encoding utf8
+
+New-Item -ItemType Directory -Force -Path "src/app" | Out-Null
+@'
+import Link from "next/link";
 import { getSiteContent, listImpactStories } from "@/lib/repo";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -258,3 +333,10 @@ export default function HomePage() {
   );
 }
 
+'@ | Set-Content -LiteralPath "src/app/page.tsx" -Encoding utf8
+
+git add -A
+git commit -m "Add journey-path graphic to How it works, fix checkmark encoding bug"
+git push
+
+Write-Host 'Done. Files written and pushed.'
