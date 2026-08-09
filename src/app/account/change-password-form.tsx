@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useActionState } from "react";
 import { changePasswordAction, type FormState } from "@/app/actions/account";

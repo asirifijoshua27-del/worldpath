@@ -1,4 +1,4 @@
-﻿ï»¿"use server";
+"use server";
 
 import { redirect } from "next/navigation";
 import { randomBytes } from "node:crypto";
@@ -227,5 +227,4 @@ export async function logoutAction() {
   await clearSessionCookie();
   redirect("/login");
 }
-
 

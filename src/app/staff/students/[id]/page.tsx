@@ -1,4 +1,4 @@
-﻿import { notFound } from "next/navigation";
+import { notFound } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { getStaffByUserId, getStudentById, getUserById, listNotesForStudent } from "@/lib/repo";
 import { StatusSelect } from "./status-select";

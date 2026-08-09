@@ -1,4 +1,4 @@
-﻿export function CheckIcon({ className = "w-3.5 h-3.5" }: { className?: string }) {
+export function CheckIcon({ className = "w-3.5 h-3.5" }: { className?: string }) {
   return (
     <svg viewBox="0 0 20 20" fill="none" className={className} aria-hidden="true">
       <path

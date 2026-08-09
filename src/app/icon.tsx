@@ -1,4 +1,4 @@
-﻿import { ImageResponse } from "next/og";
+import { ImageResponse } from "next/og";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { getSiteContent } from "@/lib/repo";
@@ -8,7 +8,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 // Google requires at least 48x48 to reliably show a favicon in search
 // results at all (smaller sizes often just fall back to a generic globe
-// icon) â€” 128x128 gives good headroom and stays sharp on high-DPI screens.
+// icon) Ã¢â‚¬â€ 128x128 gives good headroom and stays sharp on high-DPI screens.
 export const size = { width: 128, height: 128 };
 export const contentType = "image/png";
 

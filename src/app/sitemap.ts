@@ -1,4 +1,4 @@
-﻿import type { MetadataRoute } from "next";
+import type { MetadataRoute } from "next";
 import { listPublishedPosts } from "@/lib/repo";
 
 export const dynamic = "force-dynamic";

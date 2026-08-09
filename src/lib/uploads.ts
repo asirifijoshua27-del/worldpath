@@ -1,4 +1,4 @@
-﻿import fs from "node:fs/promises";
+import fs from "node:fs/promises";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
 
@@ -76,6 +76,6 @@ export async function deleteUploadedImage(url: string | null | undefined): Promi
   try {
     await fs.unlink(path.join(UPLOAD_DIR, filename));
   } catch {
-    // File may already be gone — safe to ignore.
+    // File may already be gone â€” safe to ignore.
   }
 }

@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { listStudents, listStaff, listBoardMembers, listUsers } from "@/lib/repo";
 import { APPLICATION_STATUSES } from "@/types";
 import { ArrowRight } from "@/components/arrow-right";

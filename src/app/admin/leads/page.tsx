@@ -1,4 +1,4 @@
-﻿import { listLeads } from "@/lib/repo";
+import { listLeads } from "@/lib/repo";
 import { HandledToggle } from "./handled-toggle";
 
 export const dynamic = "force-dynamic";
@@ -34,10 +34,10 @@ export default function AdminLeadsPage() {
                   </p>
                   <p className="text-sm text-ink/60">
                     {l.email}
-                    {l.phone ? ` Â· ${l.phone}` : ""}
+                    {l.phone ? ` Ã‚Â· ${l.phone}` : ""}
                   </p>
                   {areas.length > 0 && (
-                    <p className="text-sm text-teal mt-2">{areas.join(" Â· ")}</p>
+                    <p className="text-sm text-teal mt-2">{areas.join(" Ã‚Â· ")}</p>
                   )}
                   {l.availability && <p className="text-sm text-ink/60 mt-1">Availability: {l.availability}</p>}
                   {l.message && <p className="text-sm text-ink/80 mt-2 max-w-xl">{l.message}</p>}

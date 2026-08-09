@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { getSession } from "@/lib/auth";
 import { logoutAction } from "@/app/actions/auth";
 import { ChangePasswordForm } from "./change-password-form";
@@ -16,7 +16,7 @@ export default async function AccountPage() {
           <div className="flex items-center gap-4 text-sm">
             {session && (
               <Link href={`/${session.role}`} className="text-teal hover:underline">
-                ← Back to dashboard
+                â† Back to dashboard
               </Link>
             )}
             <form action={logoutAction}>

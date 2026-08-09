@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { staffToggleDocumentAction } from "@/app/actions/staff";
 import type { DocumentItem } from "@/types";
@@ -20,7 +20,7 @@ export function DocumentChecklist({ studentId, documents }: { studentId: string;
                   doc.done ? "bg-teal border-teal text-white" : "border-line"
                 }`}
               >
-                {doc.done ? "âœ“" : ""}
+                {doc.done ? "Ã¢Å“â€œ" : ""}
               </span>
               <span className={`truncate ${doc.done ? "line-through text-ink/50" : ""}`}>{doc.name}</span>
             </button>

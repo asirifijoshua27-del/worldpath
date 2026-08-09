@@ -1,4 +1,4 @@
-﻿"use server";
+"use server";
 
 import { revalidatePath } from "next/cache";
 import { getSession } from "@/lib/auth";
@@ -145,4 +145,3 @@ export async function requestApplicationFormAction(): Promise<FormState> {
   revalidatePath("/student");
   return { success: "Request sent to your counselor." };
 }
-

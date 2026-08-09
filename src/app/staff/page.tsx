@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { getSession } from "@/lib/auth";
 import { getStaffByUserId, listStudentsByStaff, getUserById } from "@/lib/repo";
 import { APPLICATION_STATUSES } from "@/types";

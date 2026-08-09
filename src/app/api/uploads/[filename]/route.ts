@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { uploadDir } from "@/lib/uploads";
@@ -15,7 +15,7 @@ const CONTENT_TYPES: Record<string, string> = {
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ filename: string }> }) {
   const { filename } = await params;
 
-  // Guard against path traversal â€” only allow a bare filename.
+  // Guard against path traversal Ã¢â‚¬â€ only allow a bare filename.
   if (!filename || filename.includes("/") || filename.includes("..")) {
     return new NextResponse("Not found", { status: 404 });
   }

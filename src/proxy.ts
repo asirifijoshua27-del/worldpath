@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
 const SESSION_COOKIE = "wpg_session";
@@ -22,7 +22,7 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const role = await readRole(request);
 
-  // /account is shared across all roles — just needs any authenticated session.
+  // /account is shared across all roles â€” just needs any authenticated session.
   if (pathname.startsWith("/account")) {
     if (!role) {
       const loginUrl = new URL("/login", request.url);
@@ -49,7 +49,7 @@ export async function proxy(request: NextRequest) {
   }
 
   if (role !== requiredRole) {
-    // Signed in, but wrong portal for their role — send them to their own portal.
+    // Signed in, but wrong portal for their role â€” send them to their own portal.
     return NextResponse.redirect(new URL(`/${role}`, request.url));
   }
 

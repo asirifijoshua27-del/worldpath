@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { getSiteContent } from "@/lib/repo";
 import { SiteHeader } from "@/components/site-header";

@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { getSiteContent } from "@/lib/repo";
 import { ProgramPageLayout } from "@/components/program-page-layout";
 

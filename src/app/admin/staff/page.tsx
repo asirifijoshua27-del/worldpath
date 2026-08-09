@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { listStaff } from "@/lib/repo";
 import { DeleteButton } from "@/components/delete-button";
 import { deleteStaffAction } from "@/app/actions/admin";

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useRef } from "react";
 import Link from "next/link";
@@ -50,7 +50,7 @@ export function StudentRow({
       <td className="py-3 pr-4">
         {student.applicationType === "free_shs" ? (
           <>
-            <span className="text-xs uppercase tracking-wide text-gold-deep font-medium">Free Â· SHS</span>
+            <span className="text-xs uppercase tracking-wide text-gold-deep font-medium">Free Ã‚Â· SHS</span>
             {student.schoolName && <p className="text-xs text-ink/50 mt-0.5">{student.schoolName}</p>}
           </>
         ) : (

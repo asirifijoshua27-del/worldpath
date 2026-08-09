@@ -1,4 +1,4 @@
-﻿ï»¿import { getSession } from "@/lib/auth";
+import { getSession } from "@/lib/auth";
 import { getStudentByUserId, getStaffById, listNotesForStudent } from "@/lib/repo";
 import { APPLICATION_STATUSES } from "@/types";
 import type { DocumentItem } from "@/types";
@@ -107,5 +107,4 @@ export default async function StudentHomePage() {
     </div>
   );
 }
-
 

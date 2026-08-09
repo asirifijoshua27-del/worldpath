@@ -1,4 +1,4 @@
-﻿ï»¿"use server";
+"use server";
 
 import { revalidatePath } from "next/cache";
 import { getSession } from "@/lib/auth";
@@ -43,5 +43,4 @@ export async function markLeadHandledAction(formData: FormData) {
   markLeadHandled(id, handled);
   revalidatePath("/admin/leads");
 }
-
 

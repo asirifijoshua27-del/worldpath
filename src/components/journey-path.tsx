@@ -1,4 +1,4 @@
-﻿interface JourneyStep {
+interface JourneyStep {
   title: string;
   body: string;
 }

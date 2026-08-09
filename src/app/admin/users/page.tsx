@@ -1,4 +1,4 @@
-﻿import { listUsers } from "@/lib/repo";
+import { listUsers } from "@/lib/repo";
 import { getSession } from "@/lib/auth";
 import { CreateStaffUserForm } from "./create-staff-form";
 import { DeleteButton } from "@/components/delete-button";
@@ -16,7 +16,7 @@ export default async function AdminUsersPage() {
       <h1 className="font-display text-3xl mb-2">Accounts</h1>
       <p className="text-ink/60 mb-8">
         All admin, staff, and student accounts. Create new staff logins here. Deleting an account removes
-        its login and any linked profile â€” staff and student records included.
+        its login and any linked profile Ã¢â‚¬â€ staff and student records included.
       </p>
 
       <div className="grid lg:grid-cols-2 gap-10">

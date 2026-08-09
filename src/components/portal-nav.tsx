@@ -1,4 +1,4 @@
-﻿ï»¿import Link from "next/link";
+import Link from "next/link";
 import { logoutAction } from "@/app/actions/auth";
 import { NotificationBell } from "@/components/notification-bell";
 import { IdleLogout } from "@/components/idle-logout";
@@ -45,5 +45,4 @@ export function PortalNav({
     </header>
   );
 }
-
 

@@ -1,4 +1,4 @@
-﻿"use server";
+"use server";
 
 import bcrypt from "bcryptjs";
 import { getSession } from "@/lib/auth";

@@ -1,4 +1,4 @@
-﻿import { notFound } from "next/navigation";
+import { notFound } from "next/navigation";
 import { getStudentById, getUserById, listNotesForStudent, listStaff } from "@/lib/repo";
 import { APPLICATION_STATUSES, CURRENT_EDUCATION_LEVELS } from "@/types";
 import type { DocumentItem } from "@/types";
@@ -53,9 +53,9 @@ export default async function AdminStudentDetailPage({ params }: { params: Promi
         <InfoCard label="Application status" value={statusLabel} />
         <InfoCard
           label="Program"
-          value={student.applicationType === "free_shs" ? "Free Â· SHS partnership" : "Standard"}
+          value={student.applicationType === "free_shs" ? "Free Ã‚Â· SHS partnership" : "Standard"}
         />
-        <InfoCard label="Targeting" value={`${student.targetLevel} â€” ${targetCountries.join(", ")}`} />
+        <InfoCard label="Targeting" value={`${student.targetLevel} Ã¢â‚¬â€ ${targetCountries.join(", ")}`} />
         <InfoCard label="Current education" value={`${eduLabel}${student.schoolName ? ` (${student.schoolName})` : ""}`} />
         <InfoCard label="Assigned counselor" value={assignedStaff?.name || "Unassigned"} />
         <InfoCard label="Applied" value={new Date(student.createdAt).toLocaleDateString()} />
@@ -72,7 +72,7 @@ export default async function AdminStudentDetailPage({ params }: { params: Promi
                     doc.done ? "bg-teal border-teal text-white" : "border-line"
                   }`}
                 >
-                  {doc.done ? "âœ“" : ""}
+                  {doc.done ? "Ã¢Å“â€œ" : ""}
                 </span>
                 {doc.name}
               </span>

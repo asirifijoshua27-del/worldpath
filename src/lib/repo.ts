@@ -1,4 +1,4 @@
-﻿ï»¿import { db, newId, nowIso, nextStudentCode, withForeignKeysOff } from "@/lib/db";
+import { db, newId, nowIso, nextStudentCode, withForeignKeysOff } from "@/lib/db";
 import type {
   UserRecord,
   StaffProfileRecord,
@@ -663,4 +663,3 @@ export function markNotificationRead(id: string, userId: string) {
 export function markAllNotificationsRead(userId: string) {
   db().prepare("UPDATE notifications SET read = 1 WHERE userId = ? AND read = 0").run(userId);
 }
-

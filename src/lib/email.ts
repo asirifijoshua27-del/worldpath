@@ -1,4 +1,4 @@
-﻿ï»¿import { Resend } from "resend";
+import { Resend } from "resend";
 
 // Sends the email-verification link via Resend when RESEND_API_KEY is set.
 // Without it (e.g. local development), the link is logged to the server
@@ -195,4 +195,3 @@ export async function sendWelcomeEmail(to: string, name: string) {
     console.error("Error sending welcome email via Resend:", err);
   }
 }
-

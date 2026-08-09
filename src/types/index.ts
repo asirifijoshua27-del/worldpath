@@ -1,4 +1,4 @@
-﻿ï»¿export type Role = "admin" | "staff" | "student";
+export type Role = "admin" | "staff" | "student";
 
 export type TargetLevel = "undergrad" | "masters" | "phd";
 
@@ -206,4 +206,3 @@ export interface NotificationRecord {
   read: number;
   createdAt: string;
 }
-

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 
@@ -25,7 +25,7 @@ export function PhotoLightbox({ src, alt, className }: { src: string; alt: strin
             className="absolute top-6 right-6 text-paper text-3xl leading-none"
             aria-label="Close"
           >
-            Ã—
+            Ãƒâ€”
           </button>
         </div>
       )}

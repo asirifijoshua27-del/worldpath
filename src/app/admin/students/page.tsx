@@ -1,4 +1,4 @@
-﻿import { listStudents, listStaff, getUserById } from "@/lib/repo";
+import { listStudents, listStaff, getUserById } from "@/lib/repo";
 import { StudentRow } from "./student-row";
 
 export const dynamic = "force-dynamic";
@@ -13,8 +13,8 @@ export default function AdminStudentsPage() {
       id: s.id,
       userId: s.userId,
       code: s.code,
-      name: user?.name || "â€”",
-      email: user?.email || "â€”",
+      name: user?.name || "Ã¢â‚¬â€",
+      email: user?.email || "Ã¢â‚¬â€",
       targetLevel: s.targetLevel,
       status: s.status,
       assignedStaffId: s.assignedStaffId,

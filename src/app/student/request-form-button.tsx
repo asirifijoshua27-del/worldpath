@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useActionState } from "react";
 import { requestApplicationFormAction } from "@/app/actions/student";
@@ -22,4 +22,3 @@ export function RequestFormButton() {
     </form>
   );
 }
-

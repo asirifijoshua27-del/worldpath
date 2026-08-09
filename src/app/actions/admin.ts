@@ -1,4 +1,4 @@
-﻿ï»¿"use server";
+"use server";
 
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
@@ -396,5 +396,4 @@ export async function deleteUserAction(userId: string): Promise<void> {
   revalidatePath("/admin/students");
   revalidatePath("/about");
 }
-
 

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useRef, useState, useTransition } from "react";
 import { studentUploadDocumentAction } from "@/app/actions/student";
@@ -30,7 +30,7 @@ export function DocumentUploadRow({ doc, index }: { doc: DocumentItem; index: nu
               doc.done ? "bg-teal border-teal text-white" : "border-line"
             }`}
           >
-            {doc.done ? "âœ“" : ""}
+            {doc.done ? "Ã¢Å“â€œ" : ""}
           </span>
           <span className={`text-sm truncate ${doc.done ? "" : "text-ink/80"}`}>{doc.name}</span>
         </div>

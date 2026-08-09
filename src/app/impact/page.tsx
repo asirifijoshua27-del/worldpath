@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { getSiteContent, listStudents, listImpactStories, listStaff } from "@/lib/repo";
 import { SiteHeader } from "@/components/site-header";
@@ -72,7 +72,7 @@ export default function ImpactPage() {
                     <div>
                       <p className="font-medium">{s.studentName}</p>
                       <p className="text-xs text-gold-deep uppercase tracking-wide">
-                        {s.destinationCountry} Â· {s.targetLevel}
+                        {s.destinationCountry} Ã‚Â· {s.targetLevel}
                       </p>
                     </div>
                   </div>

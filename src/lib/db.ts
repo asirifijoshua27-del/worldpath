@@ -1,4 +1,4 @@
-﻿ï»¿import { DatabaseSync } from "node:sqlite";
+import { DatabaseSync } from "node:sqlite";
 import path from "node:path";
 import fs from "node:fs";
 import bcrypt from "bcryptjs";
@@ -300,5 +300,4 @@ export function nextStudentCode(): string {
   }
   return `WPG-${year}-${String(next).padStart(4, "0")}`;
 }
-
 

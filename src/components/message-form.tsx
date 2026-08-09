@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useActionState, useRef, useState } from "react";
 import type { FormState } from "@/app/actions/auth";

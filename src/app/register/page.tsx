@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useActionState, useRef, startTransition } from "react";
 import Link from "next/link";
@@ -14,7 +14,7 @@ export default function RegisterPage() {
   const formRef = useRef<HTMLFormElement>(null);
 
   // React resets uncontrolled form fields the moment a <form action={...}>
-  // submits â€” including on a failed submission. On a form this long,
+  // submits Ã¢â‚¬â€ including on a failed submission. On a form this long,
   // that means a student who forgets one field (like the photo) would
   // see everything they typed disappear. Submitting manually like this,
   // instead of wiring `action` directly to the form, keeps their answers

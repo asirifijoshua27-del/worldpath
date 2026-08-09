@@ -1,4 +1,4 @@
-﻿"use server";
+"use server";
 
 import { revalidatePath } from "next/cache";
 import { getSession } from "@/lib/auth";
@@ -99,4 +99,3 @@ export async function staffAddNoteAction(
   revalidatePath(`/staff/students/${studentId}`);
   return { success: "Note added." };
 }
-

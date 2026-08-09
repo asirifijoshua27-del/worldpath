@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useActionState } from "react";
 import { emailStudentAction, type FormState } from "@/app/actions/admin";

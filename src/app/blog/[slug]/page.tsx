@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { marked } from "marked";
@@ -59,16 +59,16 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       <main className="flex-1">
         <article className="mx-auto max-w-2xl px-6 pt-16 pb-24">
           <Link href="/blog" className="text-sm text-teal hover:underline">
-            ← Back to blog
+            â† Back to blog
           </Link>
 
           {tags.length > 0 && (
-            <p className="uppercase tracking-[0.2em] text-xs text-gold-deep font-medium mt-6">{tags.join(" · ")}</p>
+            <p className="uppercase tracking-[0.2em] text-xs text-gold-deep font-medium mt-6">{tags.join(" Â· ")}</p>
           )}
           <h1 className="font-display text-3xl sm:text-4xl mt-3 mb-4">{post.title}</h1>
           <p className="text-sm text-ink/50 mb-8">
             {post.authorName}
-            {post.publishedAt ? ` · ${new Date(post.publishedAt).toLocaleDateString()}` : ""}
+            {post.publishedAt ? ` Â· ${new Date(post.publishedAt).toLocaleDateString()}` : ""}
           </p>
 
           {post.coverImageUrl && (
