@@ -1,4 +1,4 @@
-﻿import { getSession } from "@/lib/auth";
+﻿ï»¿import { getSession } from "@/lib/auth";
 import { getStudentByUserId, getStaffById, listNotesForStudent } from "@/lib/repo";
 import { APPLICATION_STATUSES } from "@/types";
 import type { DocumentItem } from "@/types";
@@ -6,6 +6,7 @@ import { DocumentUploadRow } from "./document-upload-row";
 import { MessageThread } from "@/components/message-thread";
 import { MessageForm } from "@/components/message-form";
 import { studentAddNoteAction } from "@/app/actions/student";
+import { RequestFormButton } from "./request-form-button";
 
 export const dynamic = "force-dynamic";
 
@@ -56,6 +57,19 @@ export default async function StudentHomePage() {
         </div>
       </div>
 
+      {student.applicationType === "standard" && student.assignedStaffId && (
+        <div className="border border-gold-deep/30 bg-gold/5 rounded-xl p-5 mb-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <p className="font-medium mb-1">Need your application form?</p>
+            <p className="text-sm text-ink/60">
+              Standard applications start with a request to your counselor rather than a default
+              checklist. They'll reply in your message thread with the form attached.
+            </p>
+          </div>
+          <RequestFormButton />
+        </div>
+      )}
+
       <div className="mb-10">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-display text-xl">Document checklist</h2>
@@ -93,4 +107,5 @@ export default async function StudentHomePage() {
     </div>
   );
 }
+
 

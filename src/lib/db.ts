@@ -1,4 +1,4 @@
-﻿import { DatabaseSync } from "node:sqlite";
+﻿ï»¿import { DatabaseSync } from "node:sqlite";
 import path from "node:path";
 import fs from "node:fs";
 import bcrypt from "bcryptjs";
@@ -105,6 +105,17 @@ function migrate(db: DatabaseSync) {
       value INTEGER NOT NULL DEFAULT 0
     );
 
+    CREATE TABLE IF NOT EXISTS notifications (
+      id TEXT PRIMARY KEY,
+      userId TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      type TEXT NOT NULL,
+      title TEXT NOT NULL,
+      body TEXT NOT NULL DEFAULT '',
+      link TEXT,
+      read INTEGER NOT NULL DEFAULT 0,
+      createdAt TEXT NOT NULL
+    );
+
     CREATE TABLE IF NOT EXISTS blog_posts (
       id TEXT PRIMARY KEY,
       slug TEXT UNIQUE NOT NULL,
@@ -173,7 +184,7 @@ function migrate(db: DatabaseSync) {
     try {
       db.exec(sql);
     } catch {
-      // Column already exists â€” fine.
+      // Column already exists Ã¢â‚¬â€ fine.
     }
   }
 }
@@ -289,4 +300,5 @@ export function nextStudentCode(): string {
   }
   return `WPG-${year}-${String(next).padStart(4, "0")}`;
 }
+
 

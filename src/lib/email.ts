@@ -1,4 +1,4 @@
-﻿import { Resend } from "resend";
+﻿ï»¿import { Resend } from "resend";
 
 // Sends the email-verification link via Resend when RESEND_API_KEY is set.
 // Without it (e.g. local development), the link is logged to the server
@@ -127,6 +127,72 @@ export async function sendAdminEmail(
   } catch (err) {
     if (err instanceof EmailSendError) throw err;
     throw new EmailSendError("Could not send email. Please try again.");
+  }
+}
+
+
+function welcomeEmailHtml(name: string, portalUrl: string): string {
+  return `
+  <div style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;color:#0a2e3d;">
+    <p style="text-transform:uppercase;letter-spacing:0.15em;font-size:11px;color:#0b5c73;font-weight:600;margin:0 0 16px;">
+      WorldPath Group
+    </p>
+    <h1 style="font-size:22px;margin:0 0 16px;">Welcome, ${name}!</h1>
+    <p style="font-size:15px;line-height:1.6;color:#0a2e3d;">
+      Your WorldPath Group account is ready. From your student portal you can track your
+      application status, upload documents, and message your counselor directly.
+    </p>
+    <p style="margin:28px 0;">
+      <a href="${portalUrl}"
+         style="background:#0f6e8c;color:#ffffff;text-decoration:none;padding:12px 28px;border-radius:999px;font-size:15px;display:inline-block;">
+        Go to my portal
+      </a>
+    </p>
+    <p style="font-size:14px;line-height:1.6;color:#0a2e3dcc;">
+      A quick tip: check your portal regularly. That's where you'll see updates on your
+      application, requests from your counselor, and any documents you still need to submit.
+    </p>
+    <p style="font-size:13px;color:#0a2e3d66;margin-top:32px;">
+      Questions? Just reply to this email or reach us at hello@worldpathgroup.org.
+    </p>
+  </div>`;
+}
+
+function welcomeEmailText(name: string, portalUrl: string): string {
+  return `Welcome, ${name}!\n\nYour WorldPath Group account is ready. From your student portal you can track your application status, upload documents, and message your counselor directly.\n\nGo to your portal: ${portalUrl}\n\nTip: check your portal regularly for updates and requests from your counselor.\n\nQuestions? Reach us at hello@worldpathgroup.org.`;
+}
+
+/**
+ * Sends the welcome email once a student finishes registration (verifies
+ * their email and sets a password). Best-effort: failures are logged but
+ * never thrown, so a Resend hiccup can't block the student from finishing
+ * account setup.
+ */
+export async function sendWelcomeEmail(to: string, name: string) {
+  const apiKey = process.env.RESEND_API_KEY;
+  const fromEmail = process.env.RESEND_FROM_EMAIL || "WorldPath Group <onboarding@resend.dev>";
+  const appUrl = process.env.APP_URL || "http://localhost:3000";
+  const portalUrl = `${appUrl}/student`;
+
+  if (!apiKey) {
+    console.log(`(Resend not configured) Would send welcome email to ${to}`);
+    return;
+  }
+
+  const resend = new Resend(apiKey);
+  try {
+    const { error } = await resend.emails.send({
+      from: fromEmail,
+      to,
+      subject: "Welcome to WorldPath Group",
+      html: welcomeEmailHtml(name, portalUrl),
+      text: welcomeEmailText(name, portalUrl),
+    });
+    if (error) {
+      console.error("Resend failed to send welcome email:", error);
+    }
+  } catch (err) {
+    console.error("Error sending welcome email via Resend:", err);
   }
 }
 

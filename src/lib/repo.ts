@@ -1,4 +1,4 @@
-﻿import { db, newId, nowIso, nextStudentCode, withForeignKeysOff } from "@/lib/db";
+﻿ï»¿import { db, newId, nowIso, nextStudentCode, withForeignKeysOff } from "@/lib/db";
 import type {
   UserRecord,
   StaffProfileRecord,
@@ -13,6 +13,8 @@ import type {
   Role,
   TargetLevel,
   DocumentItem,
+  NotificationRecord,
+  NotificationType,
 } from "@/types";
 
 const DEFAULT_CHECKLIST: DocumentItem[] = [
@@ -52,8 +54,8 @@ export function countAdmins(): number {
 /**
  * Deletes a user account and whatever it owns: for staff, their public
  * profile (and unassigns any students); for students, their application
- * record. Messages the account authored are kept for the record â€” see
- * listNotesForStudent â€” rather than deleted.
+ * record. Messages the account authored are kept for the record Ã¢â‚¬â€ see
+ * listNotesForStudent Ã¢â‚¬â€ rather than deleted.
  */
 export function deleteUserAccount(userId: string): { staffPhotoUrl: string | null; studentPhotoUrl: string | null; documentUrls: string[] } {
   const database = db();
@@ -613,5 +615,52 @@ export function createLead(input: {
 
 export function markLeadHandled(id: string, handled: boolean) {
   db().prepare("UPDATE volunteer_leads SET handled = ? WHERE id = ?").run(handled ? 1 : 0, id);
+}
+
+
+// ---------- Notifications ----------
+
+export function createNotification(input: {
+  userId: string;
+  type: NotificationType;
+  title: string;
+  body?: string;
+  link?: string;
+}) {
+  db()
+    .prepare(
+      `INSERT INTO notifications (id, userId, type, title, body, link, read, createdAt)
+       VALUES (?, ?, ?, ?, ?, ?, 0, ?)`
+    )
+    .run(newId(), input.userId, input.type, input.title, input.body ?? "", input.link ?? null, nowIso());
+}
+
+/** Notify every admin at once - used for events any admin should see (new student, new lead). */
+export function notifyAllAdmins(input: { type: NotificationType; title: string; body?: string; link?: string }) {
+  const admins = db().prepare("SELECT id FROM users WHERE role = 'admin'").all() as unknown as { id: string }[];
+  for (const admin of admins) {
+    createNotification({ ...input, userId: admin.id });
+  }
+}
+
+export function listNotifications(userId: string, limit = 20): NotificationRecord[] {
+  return db()
+    .prepare("SELECT * FROM notifications WHERE userId = ? ORDER BY createdAt DESC LIMIT ?")
+    .all(userId, limit) as unknown as NotificationRecord[];
+}
+
+export function countUnreadNotifications(userId: string): number {
+  const row = db().prepare("SELECT COUNT(*) as count FROM notifications WHERE userId = ? AND read = 0").get(userId) as
+    | { count: number }
+    | undefined;
+  return row?.count ?? 0;
+}
+
+export function markNotificationRead(id: string, userId: string) {
+  db().prepare("UPDATE notifications SET read = 1 WHERE id = ? AND userId = ?").run(id, userId);
+}
+
+export function markAllNotificationsRead(userId: string) {
+  db().prepare("UPDATE notifications SET read = 1 WHERE userId = ? AND read = 0").run(userId);
 }
 

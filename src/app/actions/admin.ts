@@ -1,4 +1,4 @@
-﻿"use server";
+﻿ï»¿"use server";
 
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
@@ -24,6 +24,7 @@ import {
   getUserById,
   countAdmins,
   deleteUserAccount,
+  createNotification,
 } from "@/lib/repo";
 import {
   siteContentSchema,
@@ -223,6 +224,22 @@ export async function assignStudentAction(formData: FormData) {
   const studentId = String(formData.get("studentId") || "");
   const staffId = String(formData.get("staffId") || "");
   assignStudentStaff(studentId, staffId || null);
+
+  if (staffId) {
+    const staff = getStaffById(staffId);
+    const student = getStudentById(studentId);
+    const studentUser = student ? getUserById(student.userId) : undefined;
+    if (staff?.userId && studentUser) {
+      createNotification({
+        userId: staff.userId,
+        type: "student_assigned",
+        title: "New student assigned to you",
+        body: studentUser.name,
+        link: `/staff/students/${studentId}`,
+      });
+    }
+  }
+
   revalidatePath("/admin/students");
 }
 
@@ -379,4 +396,5 @@ export async function deleteUserAction(userId: string): Promise<void> {
   revalidatePath("/admin/students");
   revalidatePath("/about");
 }
+
 

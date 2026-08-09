@@ -8,9 +8,11 @@ import {
   updateStudentStatus,
   updateStudentDocuments,
   addNote,
+  createNotification,
 } from "@/lib/repo";
+import { APPLICATION_STATUSES } from "@/types";
 import { noteSchema } from "@/lib/validators";
-import { saveUploadedImage, UploadError } from "@/lib/uploads";
+import { saveUploadedDocument, UploadError } from "@/lib/uploads";
 import type { FormState } from "@/app/actions/auth";
 import type { DocumentItem } from "@/types";
 
@@ -29,9 +31,19 @@ async function requireOwningStaff(studentId: string) {
 
 export async function staffUpdateStatusAction(formData: FormData) {
   const studentId = String(formData.get("studentId") || "");
-  await requireOwningStaff(studentId);
+  const { student } = await requireOwningStaff(studentId);
   const status = String(formData.get("status") || "");
   updateStudentStatus(studentId, status);
+
+  const statusLabel = APPLICATION_STATUSES.find((s) => s.value === status)?.label ?? status;
+  createNotification({
+    userId: student.userId,
+    type: "status_changed",
+    title: "Your application status changed",
+    body: `Your status is now "${statusLabel}".`,
+    link: "/student",
+  });
+
   revalidatePath(`/staff/students/${studentId}`);
   revalidatePath("/staff");
 }
@@ -53,17 +65,17 @@ export async function staffAddNoteAction(
   _prev: FormState,
   formData: FormData
 ): Promise<FormState> {
-  const { session } = await requireOwningStaff(studentId);
+  const { session, student } = await requireOwningStaff(studentId);
   const parsed = noteSchema.safeParse({ text: String(formData.get("text") || "") });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message || "Please check the form." };
   }
 
-  const imageFile = formData.get("image");
+  const attachmentFile = formData.get("image");
   let attachmentUrl: string | null = null;
-  if (imageFile instanceof File && imageFile.size > 0) {
+  if (attachmentFile instanceof File && attachmentFile.size > 0) {
     try {
-      attachmentUrl = await saveUploadedImage(imageFile);
+      attachmentUrl = await saveUploadedDocument(attachmentFile);
     } catch (e) {
       if (e instanceof UploadError) return { error: e.message };
       throw e;
@@ -71,10 +83,19 @@ export async function staffAddNoteAction(
   }
 
   if (!parsed.data.text.trim() && !attachmentUrl) {
-    return { error: "Add a note or attach a picture." };
+    return { error: "Add a note or attach a file." };
   }
 
   addNote(studentId, session.userId, parsed.data.text.trim(), attachmentUrl);
+
+  createNotification({
+    userId: student.userId,
+    type: "message",
+    title: `New message from ${session.name}`,
+    body: parsed.data.text.trim().slice(0, 80) || "Sent an attachment.",
+    link: "/student",
+  });
+
   revalidatePath(`/staff/students/${studentId}`);
   return { success: "Note added." };
 }

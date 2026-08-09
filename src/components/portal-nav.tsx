@@ -1,5 +1,7 @@
-﻿import Link from "next/link";
+﻿ï»¿import Link from "next/link";
 import { logoutAction } from "@/app/actions/auth";
+import { NotificationBell } from "@/components/notification-bell";
+import { IdleLogout } from "@/components/idle-logout";
 
 export function PortalNav({
   role,
@@ -29,16 +31,19 @@ export function PortalNav({
             ))}
           </nav>
         </div>
-        <div className="flex items-center gap-4 text-sm shrink-0">
+        <div className="flex items-center gap-3 text-sm shrink-0">
+          <NotificationBell />
           <Link href="/account" className="text-ink/60 hover:text-ink transition-colors">
-            {name} · <span className="uppercase text-xs tracking-wide">{role}</span>
+            {name} Â· <span className="uppercase text-xs tracking-wide">{role}</span>
           </Link>
           <form action={logoutAction}>
             <button className="text-teal hover:underline">Log out</button>
           </form>
         </div>
       </div>
+      <IdleLogout />
     </header>
   );
 }
+
 

@@ -1,4 +1,4 @@
-﻿"use server";
+﻿ï»¿"use server";
 
 import { redirect } from "next/navigation";
 import { randomBytes } from "node:crypto";
@@ -15,8 +15,9 @@ import {
   setUserPassword,
   getUserById,
   consumeVerificationToken,
+  notifyAllAdmins,
 } from "@/lib/repo";
-import { sendVerificationEmail } from "@/lib/email";
+import { sendVerificationEmail, sendWelcomeEmail } from "@/lib/email";
 import { createSessionToken, setSessionCookie, clearSessionCookie } from "@/lib/auth";
 import { saveUploadedImage, UploadError } from "@/lib/uploads";
 
@@ -100,6 +101,13 @@ export async function registerAction(_prev: FormState, formData: FormData): Prom
     photoUrl,
   });
 
+  notifyAllAdmins({
+    type: "new_student",
+    title: "New student registered",
+    body: `${user.name} registered for a standard application.`,
+    link: "/admin/students",
+  });
+
   redirect(`/register/check-email?email=${encodeURIComponent(user.email)}`);
 }
 
@@ -145,6 +153,13 @@ export async function registerFreeAction(_prev: FormState, formData: FormData): 
     photoUrl,
   });
 
+  notifyAllAdmins({
+    type: "new_student",
+    title: "New free application registered",
+    body: `${user.name} registered through the Wesley SHS free program.`,
+    link: "/admin/students",
+  });
+
   redirect(`/register/check-email?email=${encodeURIComponent(user.email)}`);
 }
 
@@ -174,6 +189,10 @@ export async function setPasswordAction(_prev: FormState, formData: FormData): P
   setUserPassword(user.id, passwordHash);
   markEmailVerified(user.id);
   consumeVerificationToken(token);
+
+  // Registration is now complete - send the welcome email. Best-effort:
+  // sendWelcomeEmail never throws, so a Resend hiccup can't block signup.
+  await sendWelcomeEmail(user.email, user.name);
 
   const session = await createSessionToken({ userId: user.id, role: "student", name: user.name });
   await setSessionCookie(session);
@@ -208,4 +227,5 @@ export async function logoutAction() {
   await clearSessionCookie();
   redirect("/login");
 }
+
 

@@ -1,8 +1,8 @@
-﻿"use server";
+﻿ï»¿"use server";
 
 import { revalidatePath } from "next/cache";
 import { getSession } from "@/lib/auth";
-import { createLead, markLeadHandled } from "@/lib/repo";
+import { createLead, markLeadHandled, notifyAllAdmins } from "@/lib/repo";
 import { leadSchema } from "@/lib/validators";
 import type { FormState } from "@/app/actions/auth";
 export type { FormState } from "@/app/actions/auth";
@@ -21,6 +21,15 @@ export async function submitLeadAction(_prev: FormState, formData: FormData): Pr
     return { error: parsed.error.issues[0]?.message || "Please check the form." };
   }
   createLead(parsed.data);
+
+  const typeLabel = parsed.data.type === "donate" ? "Donate inquiry" : parsed.data.type === "contact" ? "Contact form" : "Volunteer";
+  notifyAllAdmins({
+    type: "new_lead",
+    title: `New ${typeLabel.toLowerCase()} submission`,
+    body: `${parsed.data.name} (${parsed.data.email})`,
+    link: "/admin/leads",
+  });
+
  return { success: "Thanks - we'll be in touch soon." };
 }
 
@@ -34,4 +43,5 @@ export async function markLeadHandledAction(formData: FormData) {
   markLeadHandled(id, handled);
   revalidatePath("/admin/leads");
 }
+
 

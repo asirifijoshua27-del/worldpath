@@ -1,4 +1,4 @@
-﻿export type Role = "admin" | "staff" | "student";
+﻿ï»¿export type Role = "admin" | "staff" | "student";
 
 export type TargetLevel = "undergrad" | "masters" | "phd";
 
@@ -185,5 +185,25 @@ export interface SessionPayload {
   userId: string;
   role: Role;
   name: string;
+}
+
+export type NotificationType =
+  | "message"
+  | "document_uploaded"
+  | "status_changed"
+  | "student_assigned"
+  | "new_student"
+  | "new_lead"
+  | "form_requested";
+
+export interface NotificationRecord {
+  id: string;
+  userId: string;
+  type: NotificationType;
+  title: string;
+  body: string;
+  link: string | null;
+  read: number;
+  createdAt: string;
 }
 
