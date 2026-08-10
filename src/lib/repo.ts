@@ -15,6 +15,8 @@ import type {
   DocumentItem,
   NotificationRecord,
   NotificationType,
+  JobRecord,
+  JobVerificationStatus,
 } from "@/types";
 
 const DEFAULT_CHECKLIST: DocumentItem[] = [
@@ -65,8 +67,8 @@ export function countAdmins(): number {
 /**
  * Deletes a user account and whatever it owns: for staff, their public
  * profile (and unassigns any students); for students, their application
- * record. Messages the account authored are kept for the record ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â see
- * listNotesForStudent ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â rather than deleted.
+ * record. Messages the account authored are kept for the record ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â see
+ * listNotesForStudent ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â rather than deleted.
  */
 export function deleteUserAccount(userId: string): { staffPhotoUrl: string | null; studentPhotoUrl: string | null; documentUrls: string[] } {
   const database = db();
@@ -691,4 +693,120 @@ export function markNotificationRead(id: string, userId: string) {
 
 export function markAllNotificationsRead(userId: string) {
   db().prepare("UPDATE notifications SET read = 1 WHERE userId = ? AND read = 0").run(userId);
+}
+
+// ---------- Jobs ----------
+
+export function createJob(input: {
+  title: string;
+  employer: string;
+  country: string;
+  city?: string;
+  industry?: string;
+  employmentType?: string;
+  experienceRequired?: string;
+  educationRequirement?: string;
+  languageRequirement?: string;
+  salary?: string;
+  sponsorshipInfo?: string;
+  applicationDeadline?: string | null;
+  lastVerifiedDate?: string | null;
+  source?: string;
+  verificationStatus?: JobVerificationStatus;
+  applicationUrl?: string;
+  description?: string;
+  published?: boolean;
+}): JobRecord {
+  const id = newId();
+  const now = nowIso();
+  db()
+    .prepare(
+      `INSERT INTO jobs
+        (id, title, employer, country, city, industry, employmentType, experienceRequired, educationRequirement, languageRequirement, salary, sponsorshipInfo, applicationDeadline, lastVerifiedDate, source, verificationStatus, applicationUrl, description, published, createdAt, updatedAt)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    )
+    .run(
+      id,
+      input.title,
+      input.employer,
+      input.country,
+      input.city ?? "",
+      input.industry ?? "",
+      input.employmentType ?? "",
+      input.experienceRequired ?? "",
+      input.educationRequirement ?? "",
+      input.languageRequirement ?? "",
+      input.salary ?? "",
+      input.sponsorshipInfo ?? "",
+      input.applicationDeadline ?? null,
+      input.lastVerifiedDate ?? null,
+      input.source ?? "",
+      input.verificationStatus ?? "pending_verification",
+      input.applicationUrl ?? "",
+      input.description ?? "",
+      input.published ? 1 : 0,
+      now,
+      now
+    );
+  return getJobById(id)!;
+}
+
+export function updateJob(
+  id: string,
+  input: Partial<Omit<JobRecord, "id" | "createdAt" | "updatedAt" | "published">> & { published?: boolean | number }
+) {
+  const current = getJobById(id);
+  if (!current) return;
+  const merged = {
+    ...current,
+    ...input,
+    published: input.published === undefined ? current.published : input.published ? 1 : 0,
+  };
+  db()
+    .prepare(
+      `UPDATE jobs SET title = ?, employer = ?, country = ?, city = ?, industry = ?, employmentType = ?, experienceRequired = ?, educationRequirement = ?, languageRequirement = ?, salary = ?, sponsorshipInfo = ?, applicationDeadline = ?, lastVerifiedDate = ?, source = ?, verificationStatus = ?, applicationUrl = ?, description = ?, published = ?, updatedAt = ?
+       WHERE id = ?`
+    )
+    .run(
+      merged.title,
+      merged.employer,
+      merged.country,
+      merged.city,
+      merged.industry,
+      merged.employmentType,
+      merged.experienceRequired,
+      merged.educationRequirement,
+      merged.languageRequirement,
+      merged.salary,
+      merged.sponsorshipInfo,
+      merged.applicationDeadline,
+      merged.lastVerifiedDate,
+      merged.source,
+      merged.verificationStatus,
+      merged.applicationUrl,
+      merged.description,
+      merged.published ? 1 : 0,
+      nowIso(),
+      id
+    );
+}
+
+export function deleteJob(id: string) {
+  db().prepare("DELETE FROM jobs WHERE id = ?").run(id);
+}
+
+export function getJobById(id: string): JobRecord | undefined {
+  return db().prepare("SELECT * FROM jobs WHERE id = ?").get(id) as JobRecord | undefined;
+}
+
+/** All jobs, newest first - for the admin list (includes unpublished/expired). */
+export function listAllJobs(): JobRecord[] {
+  return db().prepare("SELECT * FROM jobs ORDER BY createdAt DESC").all() as unknown as JobRecord[];
+}
+
+/** Published, non-expired jobs only - for the public site. */
+export function listPublishedJobs(): JobRecord[] {
+  return db()
+    .prepare("SELECT * FROM jobs WHERE published = 1 AND verificationStatus != 'expired' ORDER BY createdAt DESC")
+    .all() as unknown as JobRecord[];
 }

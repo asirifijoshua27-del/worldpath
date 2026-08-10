@@ -222,3 +222,44 @@ export interface NotificationRecord {
   read: number;
   createdAt: string;
 }
+
+export type JobVerificationStatus =
+  | "verified"
+  | "employer_source"
+  | "government_source"
+  | "pending_verification"
+  | "expired";
+
+export const JOB_VERIFICATION_LABELS: Record<JobVerificationStatus, string> = {
+  verified: "Verified",
+  employer_source: "Employer Source",
+  government_source: "Government/Official Source",
+  pending_verification: "Pending Verification",
+  expired: "Expired",
+};
+
+export const JOB_COUNTRIES = ["USA", "Germany", "Other"];
+
+export interface JobRecord {
+  id: string;
+  title: string;
+  employer: string;
+  country: string;
+  city: string;
+  industry: string;
+  employmentType: string;
+  experienceRequired: string;
+  educationRequirement: string;
+  languageRequirement: string;
+  salary: string;
+  sponsorshipInfo: string;
+  applicationDeadline: string | null;
+  lastVerifiedDate: string | null;
+  source: string;
+  verificationStatus: JobVerificationStatus;
+  applicationUrl: string;
+  description: string;
+  published: number;
+  createdAt: string;
+  updatedAt: string;
+}

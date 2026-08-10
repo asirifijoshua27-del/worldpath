@@ -7,6 +7,7 @@ const LINKS = [
   { href: "/admin/staff", label: "Staff" },
   { href: "/admin/board", label: "Board" },
   { href: "/admin/students", label: "Students" },
+  { href: "/admin/jobs", label: "Job listings" },
   { href: "/admin/blog", label: "Blog" },
   { href: "/admin/impact", label: "Impact stories" },
   { href: "/admin/leads", label: "Leads" },

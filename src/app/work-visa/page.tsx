@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSiteContent } from "@/lib/repo";
+import { getSiteContent, listPublishedJobs } from "@/lib/repo";
+import { JOB_VERIFICATION_LABELS } from "@/types";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { CheckIcon } from "@/components/check-icon";
@@ -97,6 +98,7 @@ const FAQS = [
 
 export default function WorkVisaPage() {
   const content = getSiteContent();
+  const jobs = listPublishedJobs();
 
   return (
     <>
@@ -193,16 +195,68 @@ export default function WorkVisaPage() {
         <section id="opportunities" className="mx-auto max-w-6xl px-6 py-16 border-b border-line scroll-mt-16">
           <p className="uppercase tracking-[0.2em] text-xs text-gold-deep font-medium mb-3">Open roles</p>
           <h2 className="font-display text-3xl mb-6">Current International Opportunities</h2>
-          <div className="border border-dashed border-line rounded-xl p-10 text-center">
-            <p className="text-ink/70 max-w-md mx-auto leading-relaxed">
-              No verified opportunities are listed yet. Get your profile assessed so our team can reach out
-              when a suitable opportunity is confirmed.
-            </p>
-            <Link href="/register/work-visa" className="inline-block mt-5 text-sm text-teal hover:underline">
-              Get Your Profile Assessed
-              <ArrowRight />
-            </Link>
-          </div>
+          {jobs.length === 0 ? (
+            <div className="border border-dashed border-line rounded-xl p-10 text-center">
+              <p className="text-ink/70 max-w-md mx-auto leading-relaxed">
+                No verified opportunities are listed yet. Get your profile assessed so our team can reach out
+                when a suitable opportunity is confirmed.
+              </p>
+              <Link href="/register/work-visa" className="inline-block mt-5 text-sm text-teal hover:underline">
+                Get Your Profile Assessed
+                <ArrowRight />
+              </Link>
+            </div>
+          ) : (
+            <div className="grid sm:grid-cols-2 gap-6">
+              {jobs.map((job) => (
+                <div key={job.id} className="border border-line rounded-xl p-6">
+                  <div className="flex items-start justify-between gap-3 mb-1">
+                    <h3 className="font-display text-lg">{job.title}</h3>
+                    <span className="text-[11px] uppercase tracking-wide text-teal shrink-0 mt-1">
+                      {JOB_VERIFICATION_LABELS[job.verificationStatus]}
+                    </span>
+                  </div>
+                  <p className="text-sm text-ink/70 mb-3">
+                    {job.employer} &middot; {job.country}
+                    {job.city ? `, ${job.city}` : ""}
+                  </p>
+                  <ul className="text-xs text-ink/60 space-y-1 mb-4">
+                    {job.industry && <li>{job.industry}</li>}
+                    {job.experienceRequired && <li>{job.experienceRequired}</li>}
+                    {job.educationRequirement && <li>{job.educationRequirement}</li>}
+                    {job.languageRequirement && <li>{job.languageRequirement}</li>}
+                    {job.salary && <li>{job.salary}</li>}
+                  </ul>
+                  {job.sponsorshipInfo && (
+                    <p className="text-xs text-ink/70 mb-1">
+                      <strong>Sponsorship:</strong> {job.sponsorshipInfo}
+                    </p>
+                  )}
+                  {job.lastVerifiedDate && (
+                    <p className="text-xs text-ink/50 mb-4">
+                      Verified: {new Date(job.lastVerifiedDate).toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+                    </p>
+                  )}
+                  {job.applicationUrl ? (
+                    <a
+                      href={job.applicationUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-teal hover:underline inline-flex items-center"
+                    >
+                      View Opportunity
+                      <ArrowRight />
+                    </a>
+                  ) : (
+                    <Link href="/register/work-visa" className="text-sm text-teal hover:underline inline-flex items-center">
+                      Get Your Profile Assessed
+                      <ArrowRight />
+                    </Link>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </section>
 
         {/* Profile assessment CTA */}

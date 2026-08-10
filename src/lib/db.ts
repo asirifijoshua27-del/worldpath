@@ -116,6 +116,30 @@ function migrate(db: DatabaseSync) {
       createdAt TEXT NOT NULL
     );
 
+    CREATE TABLE IF NOT EXISTS jobs (
+      id TEXT PRIMARY KEY,
+      title TEXT NOT NULL,
+      employer TEXT NOT NULL,
+      country TEXT NOT NULL,
+      city TEXT NOT NULL DEFAULT '',
+      industry TEXT NOT NULL DEFAULT '',
+      employmentType TEXT NOT NULL DEFAULT '',
+      experienceRequired TEXT NOT NULL DEFAULT '',
+      educationRequirement TEXT NOT NULL DEFAULT '',
+      languageRequirement TEXT NOT NULL DEFAULT '',
+      salary TEXT NOT NULL DEFAULT '',
+      sponsorshipInfo TEXT NOT NULL DEFAULT '',
+      applicationDeadline TEXT,
+      lastVerifiedDate TEXT,
+      source TEXT NOT NULL DEFAULT '',
+      verificationStatus TEXT NOT NULL DEFAULT 'pending_verification',
+      applicationUrl TEXT NOT NULL DEFAULT '',
+      description TEXT NOT NULL DEFAULT '',
+      published INTEGER NOT NULL DEFAULT 0,
+      createdAt TEXT NOT NULL,
+      updatedAt TEXT NOT NULL
+    );
+
     CREATE TABLE IF NOT EXISTS blog_posts (
       id TEXT PRIMARY KEY,
       slug TEXT UNIQUE NOT NULL,
@@ -190,7 +214,7 @@ function migrate(db: DatabaseSync) {
     try {
       db.exec(sql);
     } catch {
-      // Column already exists ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â fine.
+      // Column already exists ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â fine.
     }
   }
 }

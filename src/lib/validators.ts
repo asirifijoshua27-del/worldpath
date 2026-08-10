@@ -147,3 +147,23 @@ export const changePasswordSchema = z
     path: ["confirmPassword"],
   });
 
+export const jobSchema = z.object({
+  title: z.string().min(2, "Enter a job title"),
+  employer: z.string().min(2, "Enter the employer name"),
+  country: z.string().min(1, "Select a country"),
+  city: z.string().optional().default(""),
+  industry: z.string().optional().default(""),
+  employmentType: z.string().optional().default(""),
+  experienceRequired: z.string().optional().default(""),
+  educationRequirement: z.string().optional().default(""),
+  languageRequirement: z.string().optional().default(""),
+  salary: z.string().optional().default(""),
+  sponsorshipInfo: z.string().optional().default(""),
+  applicationDeadline: z.string().optional().default(""),
+  lastVerifiedDate: z.string().optional().default(""),
+  source: z.string().optional().default(""),
+  verificationStatus: z.enum(["verified", "employer_source", "government_source", "pending_verification", "expired"]),
+  applicationUrl: z.string().optional().default(""),
+  description: z.string().optional().default(""),
+  published: z.boolean(),
+});
