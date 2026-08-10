@@ -43,7 +43,7 @@ export function BlogPostForm({
         <textarea name="excerpt" defaultValue={post?.excerpt} required rows={2} className="input" />
       </Field>
 
-      <Field label="Body (Markdown supported — headings, **bold**, lists, links)">
+      <Field label="Body (Markdown supported - headings, **bold**, lists, links)">
         <textarea name="body" defaultValue={post?.body} required rows={16} className="input font-mono text-sm" />
       </Field>
 

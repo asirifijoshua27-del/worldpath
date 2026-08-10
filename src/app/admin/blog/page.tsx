@@ -32,7 +32,7 @@ export default function AdminBlogPage() {
                 ) : (
                   <span className="text-gold-deep">Draft</span>
                 )}
-                {" · "}
+                {" \u00b7 "}
                 /blog/{p.slug}
               </p>
             </div>

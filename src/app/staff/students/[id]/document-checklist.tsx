@@ -2,6 +2,7 @@
 
 import { staffToggleDocumentAction } from "@/app/actions/staff";
 import type { DocumentItem } from "@/types";
+import { CheckIcon } from "@/components/check-icon";
 
 export function DocumentChecklist({ studentId, documents }: { studentId: string; documents: DocumentItem[] }) {
   return (
@@ -20,7 +21,7 @@ export function DocumentChecklist({ studentId, documents }: { studentId: string;
                   doc.done ? "bg-teal border-teal text-white" : "border-line"
                 }`}
               >
-                {doc.done ? "Ã¢Å“â€œ" : ""}
+                {doc.done ? <CheckIcon className="w-3 h-3" /> : null}
               </span>
               <span className={`truncate ${doc.done ? "line-through text-ink/50" : ""}`}>{doc.name}</span>
             </button>

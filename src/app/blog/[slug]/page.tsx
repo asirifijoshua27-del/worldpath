@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { marked } from "marked";
 import { getSiteContent, getPostBySlug } from "@/lib/repo";
 import { SiteHeader } from "@/components/site-header";
+import { BackArrowIcon } from "@/components/back-arrow-icon";
 import { SiteFooter } from "@/components/site-footer";
 
 export const dynamic = "force-dynamic";
@@ -59,16 +60,16 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       <main className="flex-1">
         <article className="mx-auto max-w-2xl px-6 pt-16 pb-24">
           <Link href="/blog" className="text-sm text-teal hover:underline">
-            â† Back to blog
+            <BackArrowIcon className="w-3.5 h-3.5 inline" /> Back to blog
           </Link>
 
           {tags.length > 0 && (
-            <p className="uppercase tracking-[0.2em] text-xs text-gold-deep font-medium mt-6">{tags.join(" Â· ")}</p>
+            <p className="uppercase tracking-[0.2em] text-xs text-gold-deep font-medium mt-6">{tags.join(" \u00b7 ")}</p>
           )}
           <h1 className="font-display text-3xl sm:text-4xl mt-3 mb-4">{post.title}</h1>
           <p className="text-sm text-ink/50 mb-8">
             {post.authorName}
-            {post.publishedAt ? ` Â· ${new Date(post.publishedAt).toLocaleDateString()}` : ""}
+            {post.publishedAt ? ` \u00b7 ${new Date(post.publishedAt).toLocaleDateString()}` : ""}
           </p>
 
           {post.coverImageUrl && (

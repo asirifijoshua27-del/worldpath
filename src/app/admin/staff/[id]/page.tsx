@@ -25,7 +25,7 @@ export default async function EditStaffPage({ params }: { params: Promise<{ id: 
           <EmailStaffForm staffId={staff.id} staffEmail={user.email} />
         ) : (
           <p className="text-sm text-ink/50 italic">
-            No linked login account yet Ã¢â‚¬â€ nothing to email. Create one from the Accounts page.
+            No linked login account yet - nothing to email. Create one from the Accounts page.
           </p>
         )}
       </div>

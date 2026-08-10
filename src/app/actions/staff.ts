@@ -8,8 +8,8 @@ import {
   updateStudentStatus,
   updateStudentDocuments,
   addNote,
-  createNotification,
 } from "@/lib/repo";
+import { notifyUser } from "@/lib/notify";
 import { APPLICATION_STATUSES } from "@/types";
 import { noteSchema } from "@/lib/validators";
 import { saveUploadedDocument, UploadError } from "@/lib/uploads";
@@ -36,7 +36,7 @@ export async function staffUpdateStatusAction(formData: FormData) {
   updateStudentStatus(studentId, status);
 
   const statusLabel = APPLICATION_STATUSES.find((s) => s.value === status)?.label ?? status;
-  createNotification({
+  await notifyUser({
     userId: student.userId,
     type: "status_changed",
     title: "Your application status changed",
@@ -88,7 +88,7 @@ export async function staffAddNoteAction(
 
   addNote(studentId, session.userId, parsed.data.text.trim(), attachmentUrl);
 
-  createNotification({
+  await notifyUser({
     userId: student.userId,
     type: "message",
     title: `New message from ${session.name}`,

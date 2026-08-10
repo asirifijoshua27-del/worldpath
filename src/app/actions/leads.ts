@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { getSession } from "@/lib/auth";
-import { createLead, markLeadHandled, notifyAllAdmins } from "@/lib/repo";
+import { createLead, markLeadHandled } from "@/lib/repo";
+import { notifyAllAdmins } from "@/lib/notify";
 import { leadSchema } from "@/lib/validators";
 import type { FormState } from "@/app/actions/auth";
 export type { FormState } from "@/app/actions/auth";
@@ -23,7 +24,7 @@ export async function submitLeadAction(_prev: FormState, formData: FormData): Pr
   createLead(parsed.data);
 
   const typeLabel = parsed.data.type === "donate" ? "Donate inquiry" : parsed.data.type === "contact" ? "Contact form" : "Volunteer";
-  notifyAllAdmins({
+  await notifyAllAdmins({
     type: "new_lead",
     title: `New ${typeLabel.toLowerCase()} submission`,
     body: `${parsed.data.name} (${parsed.data.email})`,

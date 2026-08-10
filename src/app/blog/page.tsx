@@ -56,7 +56,7 @@ export default function BlogIndexPage() {
                       <h2 className="font-display text-xl mb-2">{p.title}</h2>
                       <p className="text-sm text-ink/70 leading-relaxed flex-1">{p.excerpt}</p>
                       <p className="text-xs text-ink/40 mt-4">
-                        {p.publishedAt ? new Date(p.publishedAt).toLocaleDateString() : ""} Ã‚Â· {p.authorName}
+                        {p.publishedAt ? new Date(p.publishedAt).toLocaleDateString() : ""} &middot; {p.authorName}
                       </p>
                     </div>
                   </Link>

@@ -195,3 +195,59 @@ export async function sendWelcomeEmail(to: string, name: string) {
     console.error("Error sending welcome email via Resend:", err);
   }
 }
+
+function notificationEmailHtml(title: string, body: string, linkUrl: string): string {
+  const paragraph = body
+    ? `<p style="font-size:15px;line-height:1.6;color:#0a2e3d;margin:0 0 20px;">${body}</p>`
+    : "";
+  return `
+  <div style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;color:#0a2e3d;">
+    <p style="text-transform:uppercase;letter-spacing:0.15em;font-size:11px;color:#0b5c73;font-weight:600;margin:0 0 16px;">
+      WorldPath Group
+    </p>
+    <h1 style="font-size:19px;margin:0 0 14px;">${title}</h1>
+    ${paragraph}
+    <p style="margin:24px 0 0;">
+      <a href="${linkUrl}"
+         style="background:#0f6e8c;color:#ffffff;text-decoration:none;padding:11px 26px;border-radius:999px;font-size:14px;display:inline-block;">
+        View in portal
+      </a>
+    </p>
+  </div>`;
+}
+
+function notificationEmailText(title: string, body: string, linkUrl: string): string {
+  return `${title}\n\n${body ? body + "\n\n" : ""}View in portal: ${linkUrl}`;
+}
+
+/**
+ * Sends an email copy of an in-app notification, so people don't have to
+ * be actively watching the portal to know something happened. Best-effort:
+ * never throws, so a Resend hiccup can't block the notification itself
+ * (which is always created in the database regardless of email success).
+ */
+export async function sendNotificationEmail(to: string, title: string, body: string, linkUrl: string) {
+  const apiKey = process.env.RESEND_API_KEY;
+  const fromEmail = process.env.RESEND_FROM_EMAIL || "WorldPath Group <onboarding@resend.dev>";
+
+  if (!apiKey) {
+    console.log(`(Resend not configured) Would send notification email to ${to}: ${title}`);
+    return;
+  }
+
+  const resend = new Resend(apiKey);
+  try {
+    const { error } = await resend.emails.send({
+      from: fromEmail,
+      to,
+      subject: title,
+      html: notificationEmailHtml(title, body, linkUrl),
+      text: notificationEmailText(title, body, linkUrl),
+    });
+    if (error) {
+      console.error("Resend failed to send notification email:", error);
+    }
+  } catch (err) {
+    console.error("Error sending notification email via Resend:", err);
+  }
+}

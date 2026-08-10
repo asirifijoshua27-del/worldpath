@@ -54,8 +54,8 @@ export function countAdmins(): number {
 /**
  * Deletes a user account and whatever it owns: for staff, their public
  * profile (and unassigns any students); for students, their application
- * record. Messages the account authored are kept for the record Ã¢â‚¬â€ see
- * listNotesForStudent Ã¢â‚¬â€ rather than deleted.
+ * record. Messages the account authored are kept for the record ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â see
+ * listNotesForStudent ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â rather than deleted.
  */
 export function deleteUserAccount(userId: string): { staffPhotoUrl: string | null; studentPhotoUrl: string | null; documentUrls: string[] } {
   const database = db();
@@ -641,6 +641,11 @@ export function notifyAllAdmins(input: { type: NotificationType; title: string; 
   for (const admin of admins) {
     createNotification({ ...input, userId: admin.id });
   }
+}
+
+/** Full admin user records (id, email, name) - used to email every admin, not just notify in-app. */
+export function listAdminUsers(): UserRecord[] {
+  return db().prepare("SELECT * FROM users WHERE role = 'admin'").all() as unknown as UserRecord[];
 }
 
 export function listNotifications(userId: string, limit = 20): NotificationRecord[] {

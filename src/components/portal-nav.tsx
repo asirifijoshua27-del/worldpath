@@ -34,7 +34,7 @@ export function PortalNav({
         <div className="flex items-center gap-3 text-sm shrink-0">
           <NotificationBell />
           <Link href="/account" className="text-ink/60 hover:text-ink transition-colors">
-            {name} Â· <span className="uppercase text-xs tracking-wide">{role}</span>
+            {name} &middot; <span className="uppercase text-xs tracking-wide">{role}</span>
           </Link>
           <form action={logoutAction}>
             <button className="text-teal hover:underline">Log out</button>

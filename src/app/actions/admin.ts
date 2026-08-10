@@ -24,8 +24,8 @@ import {
   getUserById,
   countAdmins,
   deleteUserAccount,
-  createNotification,
 } from "@/lib/repo";
+import { notifyUser } from "@/lib/notify";
 import {
   siteContentSchema,
   staffSchema,
@@ -230,7 +230,7 @@ export async function assignStudentAction(formData: FormData) {
     const student = getStudentById(studentId);
     const studentUser = student ? getUserById(student.userId) : undefined;
     if (staff?.userId && studentUser) {
-      createNotification({
+      await notifyUser({
         userId: staff.userId,
         type: "student_assigned",
         title: "New student assigned to you",

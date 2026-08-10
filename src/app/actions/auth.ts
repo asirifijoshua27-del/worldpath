@@ -15,8 +15,8 @@ import {
   setUserPassword,
   getUserById,
   consumeVerificationToken,
-  notifyAllAdmins,
 } from "@/lib/repo";
+import { notifyAllAdmins } from "@/lib/notify";
 import { sendVerificationEmail, sendWelcomeEmail } from "@/lib/email";
 import { createSessionToken, setSessionCookie, clearSessionCookie } from "@/lib/auth";
 import { saveUploadedImage, UploadError } from "@/lib/uploads";
@@ -101,7 +101,7 @@ export async function registerAction(_prev: FormState, formData: FormData): Prom
     photoUrl,
   });
 
-  notifyAllAdmins({
+  await notifyAllAdmins({
     type: "new_student",
     title: "New student registered",
     body: `${user.name} registered for a standard application.`,
@@ -153,7 +153,7 @@ export async function registerFreeAction(_prev: FormState, formData: FormData): 
     photoUrl,
   });
 
-  notifyAllAdmins({
+  await notifyAllAdmins({
     type: "new_student",
     title: "New free application registered",
     body: `${user.name} registered through the Wesley SHS free program.`,

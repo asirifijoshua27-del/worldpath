@@ -34,10 +34,10 @@ export default function AdminLeadsPage() {
                   </p>
                   <p className="text-sm text-ink/60">
                     {l.email}
-                    {l.phone ? ` Ã‚Â· ${l.phone}` : ""}
+                    {l.phone ? ` \u00b7 ${l.phone}` : ""}
                   </p>
                   {areas.length > 0 && (
-                    <p className="text-sm text-teal mt-2">{areas.join(" Ã‚Â· ")}</p>
+                    <p className="text-sm text-teal mt-2">{areas.join(" \u00b7 ")}</p>
                   )}
                   {l.availability && <p className="text-sm text-ink/60 mt-1">Availability: {l.availability}</p>}
                   {l.message && <p className="text-sm text-ink/80 mt-2 max-w-xl">{l.message}</p>}

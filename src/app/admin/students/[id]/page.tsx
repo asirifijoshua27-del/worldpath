@@ -7,6 +7,7 @@ import { MessageThread } from "@/components/message-thread";
 import { EmailStudentForm } from "./email-student-form";
 import { DeleteButton } from "@/components/delete-button";
 import { deleteUserAction } from "@/app/actions/admin";
+import { CheckIcon } from "@/components/check-icon";
 
 export const dynamic = "force-dynamic";
 
@@ -53,9 +54,9 @@ export default async function AdminStudentDetailPage({ params }: { params: Promi
         <InfoCard label="Application status" value={statusLabel} />
         <InfoCard
           label="Program"
-          value={student.applicationType === "free_shs" ? "Free Ã‚Â· SHS partnership" : "Standard"}
+          value={student.applicationType === "free_shs" ? "Free &middot; SHS partnership" : "Standard"}
         />
-        <InfoCard label="Targeting" value={`${student.targetLevel} Ã¢â‚¬â€ ${targetCountries.join(", ")}`} />
+        <InfoCard label="Targeting" value={`${student.targetLevel} - ${targetCountries.join(", ")}`} />
         <InfoCard label="Current education" value={`${eduLabel}${student.schoolName ? ` (${student.schoolName})` : ""}`} />
         <InfoCard label="Assigned counselor" value={assignedStaff?.name || "Unassigned"} />
         <InfoCard label="Applied" value={new Date(student.createdAt).toLocaleDateString()} />
@@ -72,7 +73,7 @@ export default async function AdminStudentDetailPage({ params }: { params: Promi
                     doc.done ? "bg-teal border-teal text-white" : "border-line"
                   }`}
                 >
-                  {doc.done ? "Ã¢Å“â€œ" : ""}
+                  {doc.done ? <CheckIcon className="w-3 h-3" /> : null}
                 </span>
                 {doc.name}
               </span>

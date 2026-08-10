@@ -26,7 +26,7 @@ export function MessageThread({ messages, viewerRole }: { messages: ThreadMessag
               }`}
             >
               <p className={`text-xs mb-1 ${isMine ? "text-paper/60" : "text-ink/50"}`}>
-                {isMine ? "You" : m.authorName} Ã‚Â· {new Date(m.createdAt).toLocaleString()}
+                {isMine ? "You" : m.authorName} &middot; {new Date(m.createdAt).toLocaleString()}
               </p>
               {m.text && <p className="text-sm whitespace-pre-line">{m.text}</p>}
               {m.attachmentUrl && (

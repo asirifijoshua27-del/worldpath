@@ -3,6 +3,7 @@
 import { useRef, useState, useTransition } from "react";
 import { studentUploadDocumentAction } from "@/app/actions/student";
 import type { DocumentItem } from "@/types";
+import { CheckIcon } from "@/components/check-icon";
 
 export function DocumentUploadRow({ doc, index }: { doc: DocumentItem; index: number }) {
   const fileRef = useRef<HTMLInputElement>(null);
@@ -30,7 +31,7 @@ export function DocumentUploadRow({ doc, index }: { doc: DocumentItem; index: nu
               doc.done ? "bg-teal border-teal text-white" : "border-line"
             }`}
           >
-            {doc.done ? "Ã¢Å“â€œ" : ""}
+            {doc.done ? <CheckIcon className="w-3 h-3" /> : null}
           </span>
           <span className={`text-sm truncate ${doc.done ? "" : "text-ink/80"}`}>{doc.name}</span>
         </div>

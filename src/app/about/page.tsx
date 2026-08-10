@@ -84,7 +84,7 @@ function PersonCard({
       </div>
       <h3 className="font-display text-lg">{name}</h3>
       <p className={`text-sm mb-2 ${isBoard ? "text-gold-deep" : "text-teal"}`}>
-        {isBoard ? "Board Ã‚Â· " : ""}
+        {isBoard ? "Board &middot; " : ""}
         {title}
       </p>
       <p className="text-sm text-ink/70 leading-relaxed">{bio}</p>

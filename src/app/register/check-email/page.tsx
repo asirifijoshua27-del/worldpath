@@ -1,3 +1,5 @@
+import { CheckIcon } from "@/components/check-icon";
+
 export default async function CheckEmailPage({
   searchParams,
 }: {
@@ -8,8 +10,8 @@ export default async function CheckEmailPage({
   return (
     <main className="flex-1 flex items-center justify-center px-6 py-16">
       <div className="max-w-md text-center">
-        <span className="inline-grid place-items-center w-14 h-14 rounded-full bg-teal/10 text-teal font-display text-2xl mb-6">
-          ✓
+        <span className="inline-grid place-items-center w-14 h-14 rounded-full bg-teal/10 text-teal mb-6">
+          <CheckIcon className="w-6 h-6" />
         </span>
         <h1 className="font-display text-2xl mb-3">Check your email</h1>
         <p className="text-ink/70 leading-relaxed">

@@ -113,7 +113,7 @@ export function ContentForm({
       </Section>
 
       <Section title="WorldPath Caretaking Foundation">
-        <Field label="Description (projects, partnerships Ã¢â‚¬â€ shown on the homepage and the Foundation page)">
+        <Field label="Description (projects, partnerships - shown on the homepage and the Foundation page)">
           <textarea
             name="caretakingInfo"
             defaultValue={content.caretakingInfo}
@@ -145,7 +145,7 @@ export function ContentForm({
       </Section>
 
       <Section title="Donate">
-        <Field label="Donate details (bank account / mobile money Ã¢â‚¬â€ shown on the Get Involved page)">
+        <Field label="Donate details (bank account / mobile money - shown on the Get Involved page)">
           <textarea name="donateInfo" defaultValue={content.donateInfo} rows={4} className="input" />
         </Field>
       </Section>

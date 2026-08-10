@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { getSession } from "@/lib/auth";
-import { getStudentByUserId, updateStudentDocuments, addNote, createNotification, getStaffById } from "@/lib/repo";
+import { getStudentByUserId, updateStudentDocuments, addNote, getStaffById } from "@/lib/repo";
+import { notifyUser } from "@/lib/notify";
 import { noteSchema } from "@/lib/validators";
 import { saveUploadedDocument, UploadError, deleteUploadedImage } from "@/lib/uploads";
 import type { FormState } from "@/app/actions/auth";
@@ -21,7 +22,7 @@ async function requireOwnStudentRecord() {
   return { session, student };
 }
 
-function notifyAssignedStaff(
+async function notifyAssignedStaff(
   assignedStaffId: string | null,
   studentId: string,
   input: { type: "message" | "document_uploaded" | "form_requested"; title: string; body: string }
@@ -29,7 +30,7 @@ function notifyAssignedStaff(
   if (!assignedStaffId) return;
   const staff = getStaffById(assignedStaffId);
   if (!staff?.userId) return;
-  createNotification({
+  await notifyUser({
     userId: staff.userId,
     type: input.type,
     title: input.title,
@@ -65,7 +66,7 @@ export async function studentUploadDocumentAction(formData: FormData): Promise<F
   docs[index] = { ...docs[index], fileUrl, done: true, uploadedAt: new Date().toISOString() };
   updateStudentDocuments(student.id, docs);
 
-  notifyAssignedStaff(student.assignedStaffId, student.id, {
+  await notifyAssignedStaff(student.assignedStaffId, student.id, {
     type: "document_uploaded",
     title: `${session.name} uploaded a document`,
     body: docs[index].name,
@@ -100,7 +101,7 @@ export async function studentAddNoteAction(_prev: FormState, formData: FormData)
 
   addNote(student.id, session.userId, parsed.data.text.trim(), attachmentUrl);
 
-  notifyAssignedStaff(student.assignedStaffId, student.id, {
+  await notifyAssignedStaff(student.assignedStaffId, student.id, {
     type: "message",
     title: `New message from ${session.name}`,
     body: parsed.data.text.trim().slice(0, 80) || "Sent an attachment.",
@@ -134,7 +135,7 @@ export async function requestApplicationFormAction(): Promise<FormState> {
 
   addNote(student.id, session.userId, "Requested the application form.");
 
-  createNotification({
+  await notifyUser({
     userId: staff.userId,
     type: "form_requested",
     title: `${session.name} requested the application form`,

@@ -72,7 +72,7 @@ export default function ImpactPage() {
                     <div>
                       <p className="font-medium">{s.studentName}</p>
                       <p className="text-xs text-gold-deep uppercase tracking-wide">
-                        {s.destinationCountry} Ã‚Â· {s.targetLevel}
+                        {s.destinationCountry} &middot; {s.targetLevel}
                       </p>
                     </div>
                   </div>
