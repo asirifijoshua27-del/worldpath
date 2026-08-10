@@ -1,5 +1,23 @@
 import Link from "next/link";
 
+// Displays a Ghana local number (0XXXXXXXXX) in international format
+// (+233 XX XXX XXXX) without changing the underlying value stored in admin.
+// Leaves anything that doesn't match the expected shape untouched, since
+// the field can hold multiple numbers separated by "/".
+function toInternationalGhana(phone: string): string {
+  return phone
+    .split("/")
+    .map((raw) => {
+      const digits = raw.trim().replace(/[^\d]/g, "");
+      if (digits.length === 10 && digits.startsWith("0")) {
+        const n = digits.slice(1);
+        return `+233 ${n.slice(0, 2)} ${n.slice(2, 5)} ${n.slice(5)}`;
+      }
+      return raw.trim();
+    })
+    .join(" / ");
+}
+
 export function SiteFooter({
   orgName,
   contactEmail,
@@ -32,7 +50,18 @@ export function SiteFooter({
             { href: "/programs/masters", label: "Master's" },
             { href: "/programs/phd", label: "PhD" },
             { href: "/scholarships", label: "Scholarships" },
-            { href: "/work-visa", label: "Work Visa Support" },
+          ]}
+        />
+
+        <FooterColumn
+          title="International Careers"
+          links={[
+            { href: "/work-visa", label: "International Careers" },
+            { href: "/work-visa#opportunities", label: "USA Opportunities" },
+            { href: "/work-visa#opportunities", label: "Germany Opportunities" },
+            { href: "/work-visa", label: "Work Visa Guidance" },
+            { href: "/register/work-visa", label: "Applicant Assessment" },
+            { href: "/work-visa#scam-awareness", label: "Scam Awareness" },
           ]}
         />
 
@@ -45,19 +74,21 @@ export function SiteFooter({
             { href: "/get-involved", label: "Get Involved" },
           ]}
         />
+      </div>
 
-        <div>
-          <p className="font-medium mb-3">Contact</p>
-          <div className="space-y-1 text-ink/60">
+      <div className="border-t border-line">
+        <div className="mx-auto max-w-6xl px-6 py-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-sm">
+          <div className="text-ink/60 space-y-0.5">
             {contactEmail && <p>{contactEmail}</p>}
-            {contactPhone && <p>{contactPhone}</p>}
+            {contactPhone && <p>{toInternationalGhana(contactPhone)}</p>}
             {address && <p className="whitespace-pre-line">{address}</p>}
           </div>
-          <Link href="/contact" className="inline-block mt-2 text-teal hover:underline">
+          <Link href="/contact" className="text-teal hover:underline shrink-0">
             Contact page
           </Link>
         </div>
       </div>
+
       <div className="border-t border-line">
         <p className="mx-auto max-w-6xl px-6 py-5 text-xs text-ink/50">
           &copy; {new Date().getFullYear()} {orgName}. All rights reserved.
@@ -73,7 +104,7 @@ function FooterColumn({ title, links }: { title: string; links: { href: string; 
       <p className="font-medium mb-3">{title}</p>
       <ul className="space-y-1.5">
         {links.map((l) => (
-          <li key={l.href}>
+          <li key={l.href + l.label}>
             <Link href={l.href} className="text-ink/60 hover:text-teal transition-colors">
               {l.label}
             </Link>
@@ -83,4 +114,3 @@ function FooterColumn({ title, links }: { title: string; links: { href: string; 
     </div>
   );
 }
-
