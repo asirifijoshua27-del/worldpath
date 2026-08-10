@@ -106,6 +106,7 @@ export async function updateSiteContentAction(_prev: FormState, formData: FormDa
     mastersInfo: String(formData.get("mastersInfo") || ""),
     phdInfo: String(formData.get("phdInfo") || ""),
     scholarshipsInfo: String(formData.get("scholarshipsInfo") || ""),
+    workVisaInfo: String(formData.get("workVisaInfo") || ""),
     logoUrl,
     heroImageUrl,
     founderPhotoUrl,
@@ -121,6 +122,7 @@ export async function updateSiteContentAction(_prev: FormState, formData: FormDa
   revalidatePath("/programs/masters");
   revalidatePath("/programs/phd");
   revalidatePath("/scholarships");
+  revalidatePath("/work-visa");
   revalidatePath("/contact");
   revalidatePath("/impact");
   revalidatePath("/get-involved");

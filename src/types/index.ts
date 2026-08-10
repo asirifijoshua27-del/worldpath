@@ -78,6 +78,16 @@ export interface BoardMemberRecord {
   sortOrder: number;
 }
 
+export type ApplicationTrack = "university" | "work_visa";
+
+export const YEARS_EXPERIENCE_OPTIONS = [
+  "Less than 1 year",
+  "1-3 years",
+  "3-5 years",
+  "5-10 years",
+  "10+ years",
+];
+
 export interface StudentRecord {
   id: string;
   code: string;
@@ -92,6 +102,11 @@ export interface StudentRecord {
   schoolName: string;
   applicationType: ApplicationType;
   photoUrl: string | null;
+  applicationTrack: ApplicationTrack;
+  profession: string;
+  currentOccupation: string;
+  yearsExperience: string;
+  hasJobOffer: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -125,6 +140,7 @@ export interface SiteContentRecord {
   mastersInfo: string;
   phdInfo: string;
   scholarshipsInfo: string;
+  workVisaInfo: string;
   caretakingInfo: string;
 }
 

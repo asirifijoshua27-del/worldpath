@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { randomBytes } from "node:crypto";
 import bcrypt from "bcryptjs";
-import { registerSchema, freeRegisterSchema, loginSchema } from "@/lib/validators";
+import { registerSchema, freeRegisterSchema, workVisaRegisterSchema, loginSchema } from "@/lib/validators";
 import {
   createUser,
   getUserByEmail,
@@ -157,6 +157,64 @@ export async function registerFreeAction(_prev: FormState, formData: FormData): 
     type: "new_student",
     title: "New free application registered",
     body: `${user.name} registered through the Wesley SHS free program.`,
+    link: "/admin/students",
+  });
+
+  redirect(`/register/check-email?email=${encodeURIComponent(user.email)}`);
+}
+
+export async function registerWorkVisaAction(_prev: FormState, formData: FormData): Promise<FormState> {
+  const raw = {
+    name: String(formData.get("name") || ""),
+    email: String(formData.get("email") || ""),
+    profession: String(formData.get("profession") || ""),
+    currentOccupation: String(formData.get("currentOccupation") || ""),
+    yearsExperience: String(formData.get("yearsExperience") || ""),
+    hasJobOffer: formData.get("hasJobOffer") === "on",
+    targetCountries: formData.getAll("targetCountries").map(String),
+  };
+
+  const parsed = workVisaRegisterSchema.safeParse(raw);
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message || "Please check the form and try again." };
+  }
+
+  const photoFile = formData.get("photo");
+  if (!(photoFile instanceof File) || photoFile.size === 0) {
+    return { error: "Please attach a photo of yourself." };
+  }
+  let photoUrl: string;
+  try {
+    photoUrl = await saveUploadedImage(photoFile);
+  } catch (e) {
+    if (e instanceof UploadError) return { error: e.message };
+    throw e;
+  }
+
+  if (getUserByEmail(parsed.data.email)) {
+    return { error: "An account with this email already exists. Try logging in instead." };
+  }
+
+  const user = await createAccountAndSendVerification(parsed.data.name, parsed.data.email);
+
+  createStudentForUser({
+    userId: user.id,
+    targetLevel: "undergrad",
+    targetCountries: parsed.data.targetCountries,
+    scholarshipInterest: false,
+    applicationType: "standard",
+    applicationTrack: "work_visa",
+    profession: parsed.data.profession,
+    currentOccupation: parsed.data.currentOccupation,
+    yearsExperience: parsed.data.yearsExperience,
+    hasJobOffer: parsed.data.hasJobOffer,
+    photoUrl,
+  });
+
+  await notifyAllAdmins({
+    type: "new_student",
+    title: "New work visa application registered",
+    body: `${user.name} registered for work visa support (${parsed.data.profession}).`,
     link: "/admin/students",
   });
 

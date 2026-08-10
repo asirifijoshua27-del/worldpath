@@ -21,6 +21,8 @@ export default function AdminStudentsPage() {
       applicationType: s.applicationType,
       schoolName: s.schoolName,
       photoUrl: s.photoUrl,
+      applicationTrack: s.applicationTrack,
+      profession: s.profession,
     };
   });
 

@@ -23,6 +23,8 @@ export function StudentRow({
     applicationType: string;
     schoolName: string;
     photoUrl: string | null;
+    applicationTrack: string;
+    profession: string;
   };
   staffOptions: { id: string; name: string }[];
 }) {
@@ -48,7 +50,9 @@ export function StudentRow({
         <p className="text-xs text-ink/50">{student.email}</p>
       </td>
       <td className="py-3 pr-4">
-        {student.applicationType === "free_shs" ? (
+        {student.applicationTrack === "work_visa" ? (
+          <span className="text-xs uppercase tracking-wide text-teal font-medium">Work visa</span>
+        ) : student.applicationType === "free_shs" ? (
           <>
             <span className="text-xs uppercase tracking-wide text-gold-deep font-medium">Free &middot; SHS</span>
             {student.schoolName && <p className="text-xs text-ink/50 mt-0.5">{student.schoolName}</p>}
@@ -57,7 +61,9 @@ export function StudentRow({
           <span className="text-xs text-ink/50">Standard</span>
         )}
       </td>
-      <td className="py-3 pr-4 text-sm capitalize">{student.targetLevel}</td>
+      <td className="py-3 pr-4 text-sm capitalize">
+        {student.applicationTrack === "work_visa" ? student.profession : student.targetLevel}
+      </td>
       <td className="py-3 pr-4">
         <form ref={statusFormRef} action={adminUpdateStatusAction}>
           <input type="hidden" name="studentId" value={student.id} />

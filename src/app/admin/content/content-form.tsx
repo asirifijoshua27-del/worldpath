@@ -26,6 +26,7 @@ export function ContentForm({
     mastersInfo: string;
     phdInfo: string;
     scholarshipsInfo: string;
+    workVisaInfo: string;
     caretakingInfo: string;
   };
 }) {
@@ -109,6 +110,9 @@ export function ContentForm({
         </Field>
         <Field label="Scholarships">
           <textarea name="scholarshipsInfo" defaultValue={content.scholarshipsInfo} rows={4} className="input" />
+        </Field>
+        <Field label="Work visa support">
+          <textarea name="workVisaInfo" defaultValue={content.workVisaInfo} rows={4} className="input" />
         </Field>
       </Section>
 

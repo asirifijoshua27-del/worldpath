@@ -23,6 +23,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/programs/masters`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${base}/programs/phd`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${base}/scholarships`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${base}/work-visa`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${base}/register/work-visa`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${base}/contact`, changeFrequency: "monthly", priority: 0.5 },
   ];
 

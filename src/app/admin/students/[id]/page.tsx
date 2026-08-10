@@ -54,10 +54,27 @@ export default async function AdminStudentDetailPage({ params }: { params: Promi
         <InfoCard label="Application status" value={statusLabel} />
         <InfoCard
           label="Program"
-          value={student.applicationType === "free_shs" ? "Free &middot; SHS partnership" : "Standard"}
+          value={
+            student.applicationTrack === "work_visa"
+              ? "Work visa support"
+              : student.applicationType === "free_shs"
+                ? "Free &middot; SHS partnership"
+                : "Standard"
+          }
         />
-        <InfoCard label="Targeting" value={`${student.targetLevel} - ${targetCountries.join(", ")}`} />
-        <InfoCard label="Current education" value={`${eduLabel}${student.schoolName ? ` (${student.schoolName})` : ""}`} />
+        {student.applicationTrack === "work_visa" ? (
+          <>
+            <InfoCard label="Profession" value={`${student.profession} - ${targetCountries.join(", ")}`} />
+            <InfoCard label="Current occupation" value={student.currentOccupation || "Not specified"} />
+            <InfoCard label="Experience" value={student.yearsExperience} />
+            <InfoCard label="Job offer" value={student.hasJobOffer ? "Yes" : "Not yet"} />
+          </>
+        ) : (
+          <>
+            <InfoCard label="Targeting" value={`${student.targetLevel} - ${targetCountries.join(", ")}`} />
+            <InfoCard label="Current education" value={`${eduLabel}${student.schoolName ? ` (${student.schoolName})` : ""}`} />
+          </>
+        )}
         <InfoCard label="Assigned counselor" value={assignedStaff?.name || "Unassigned"} />
         <InfoCard label="Applied" value={new Date(student.createdAt).toLocaleDateString()} />
       </div>

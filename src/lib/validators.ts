@@ -16,6 +16,16 @@ export const freeRegisterSchema = z.object({
   targetCountries: z.array(z.string()).min(1, "Choose at least one destination"),
 });
 
+export const workVisaRegisterSchema = z.object({
+  name: z.string().min(2, "Enter your full name"),
+  email: z.string().email("Enter a valid email address"),
+  profession: z.string().min(2, "Enter your profession or field"),
+  currentOccupation: z.string().optional().default(""),
+  yearsExperience: z.string().min(1, "Select your years of experience"),
+  hasJobOffer: z.boolean(),
+  targetCountries: z.array(z.string()).min(1, "Choose at least one destination country"),
+});
+
 export const setPasswordSchema = z
   .object({
     token: z.string().min(1),
@@ -51,6 +61,7 @@ export const siteContentSchema = z.object({
   mastersInfo: z.string().optional().default(""),
   phdInfo: z.string().optional().default(""),
   scholarshipsInfo: z.string().optional().default(""),
+  workVisaInfo: z.string().optional().default(""),
   caretakingInfo: z.string().optional().default(""),
 });
 

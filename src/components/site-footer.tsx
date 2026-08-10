@@ -32,6 +32,7 @@ export function SiteFooter({
             { href: "/programs/masters", label: "Master's" },
             { href: "/programs/phd", label: "PhD" },
             { href: "/scholarships", label: "Scholarships" },
+            { href: "/work-visa", label: "Work Visa Support" },
           ]}
         />
 

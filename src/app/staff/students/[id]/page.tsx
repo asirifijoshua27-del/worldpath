@@ -52,9 +52,22 @@ export default async function StaffStudentPage({ params }: { params: Promise<{ i
           <StatusSelect studentId={student.id} status={student.status} />
         </div>
         <div>
-          <h2 className="text-sm font-medium mb-2">Targeting</h2>
-          <p className="text-sm text-ink/70 capitalize">{student.targetLevel}</p>
-          <p className="text-sm text-ink/70">{targetCountries.join(", ")}</p>
+          {student.applicationTrack === "work_visa" ? (
+            <>
+              <h2 className="text-sm font-medium mb-2">Profession</h2>
+              <p className="text-sm text-ink/70">{student.profession}</p>
+              <p className="text-sm text-ink/70">{targetCountries.join(", ")}</p>
+              <p className="text-sm text-ink/70 mt-2">
+                {student.yearsExperience} experience &middot; {student.hasJobOffer ? "Has a job offer" : "No job offer yet"}
+              </p>
+            </>
+          ) : (
+            <>
+              <h2 className="text-sm font-medium mb-2">Targeting</h2>
+              <p className="text-sm text-ink/70 capitalize">{student.targetLevel}</p>
+              <p className="text-sm text-ink/70">{targetCountries.join(", ")}</p>
+            </>
+          )}
         </div>
       </div>
 

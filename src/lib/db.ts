@@ -179,12 +179,18 @@ function migrate(db: DatabaseSync) {
     "ALTER TABLE site_content ADD COLUMN mastersInfo TEXT NOT NULL DEFAULT ''",
     "ALTER TABLE site_content ADD COLUMN phdInfo TEXT NOT NULL DEFAULT ''",
     "ALTER TABLE site_content ADD COLUMN scholarshipsInfo TEXT NOT NULL DEFAULT ''",
+    "ALTER TABLE site_content ADD COLUMN workVisaInfo TEXT NOT NULL DEFAULT ''",
+    "ALTER TABLE students ADD COLUMN applicationTrack TEXT NOT NULL DEFAULT 'university'",
+    "ALTER TABLE students ADD COLUMN profession TEXT NOT NULL DEFAULT ''",
+    "ALTER TABLE students ADD COLUMN currentOccupation TEXT NOT NULL DEFAULT ''",
+    "ALTER TABLE students ADD COLUMN yearsExperience TEXT NOT NULL DEFAULT ''",
+    "ALTER TABLE students ADD COLUMN hasJobOffer INTEGER NOT NULL DEFAULT 0",
   ];
   for (const sql of alters) {
     try {
       db.exec(sql);
     } catch {
-      // Column already exists Ã¢â‚¬â€ fine.
+      // Column already exists ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â fine.
     }
   }
 }

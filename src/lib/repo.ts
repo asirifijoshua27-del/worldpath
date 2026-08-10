@@ -26,6 +26,17 @@ const DEFAULT_CHECKLIST: DocumentItem[] = [
   { name: "Financial / sponsorship documents", done: false },
 ];
 
+const WORK_VISA_CHECKLIST: DocumentItem[] = [
+  { name: "Passport", done: false },
+  { name: "CV / resume", done: false },
+  { name: "Professional qualification / certification", done: false },
+  { name: "Reference letters from past employers", done: false },
+  { name: "Language proficiency test (if required)", done: false },
+  { name: "Job offer letter (if you have one)", done: false },
+  { name: "Police clearance certificate", done: false },
+  { name: "Medical certificate", done: false },
+];
+
 // ---------- Users ----------
 
 export function getUserByEmail(email: string): UserRecord | undefined {
@@ -54,8 +65,8 @@ export function countAdmins(): number {
 /**
  * Deletes a user account and whatever it owns: for staff, their public
  * profile (and unassigns any students); for students, their application
- * record. Messages the account authored are kept for the record ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â see
- * listNotesForStudent ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â rather than deleted.
+ * record. Messages the account authored are kept for the record ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â see
+ * listNotesForStudent ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â rather than deleted.
  */
 export function deleteUserAccount(userId: string): { staffPhotoUrl: string | null; studentPhotoUrl: string | null; documentUrls: string[] } {
   const database = db();
@@ -268,15 +279,22 @@ export function createStudentForUser(input: {
   schoolName?: string;
   applicationType?: "standard" | "free_shs";
   photoUrl?: string | null;
+  applicationTrack?: "university" | "work_visa";
+  profession?: string;
+  currentOccupation?: string;
+  yearsExperience?: string;
+  hasJobOffer?: boolean;
 }): StudentRecord {
   const id = newId();
   const now = nowIso();
   const code = nextStudentCode();
+  const track = input.applicationTrack ?? "university";
+  const checklist = track === "work_visa" ? WORK_VISA_CHECKLIST : DEFAULT_CHECKLIST;
   db()
     .prepare(
       `INSERT INTO students
-        (id, code, userId, targetLevel, targetCountries, status, assignedStaffId, documents, scholarshipInterest, currentEducationLevel, schoolName, applicationType, photoUrl, createdAt, updatedAt)
-       VALUES (?, ?, ?, ?, ?, 'new', NULL, ?, ?, ?, ?, ?, ?, ?, ?)`
+        (id, code, userId, targetLevel, targetCountries, status, assignedStaffId, documents, scholarshipInterest, currentEducationLevel, schoolName, applicationType, photoUrl, applicationTrack, profession, currentOccupation, yearsExperience, hasJobOffer, createdAt, updatedAt)
+       VALUES (?, ?, ?, ?, ?, 'new', NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
     .run(
       id,
@@ -284,12 +302,17 @@ export function createStudentForUser(input: {
       input.userId,
       input.targetLevel,
       JSON.stringify(input.targetCountries),
-      JSON.stringify(DEFAULT_CHECKLIST),
+      JSON.stringify(checklist),
       input.scholarshipInterest ? 1 : 0,
       input.currentEducationLevel ?? "",
       input.schoolName ?? "",
       input.applicationType ?? "standard",
       input.photoUrl ?? null,
+      track,
+      input.profession ?? "",
+      input.currentOccupation ?? "",
+      input.yearsExperience ?? "",
+      input.hasJobOffer ? 1 : 0,
       now,
       now
     );
@@ -353,7 +376,7 @@ export function getSiteContent(): SiteContentRecord {
 export function updateSiteContent(input: Omit<SiteContentRecord, "id">) {
   db()
     .prepare(
-      `UPDATE site_content SET orgName = ?, tagline = ?, mission = ?, vision = ?, contactEmail = ?, contactPhone = ?, address = ?, donateInfo = ?, logoUrl = ?, heroImageUrl = ?, founderName = ?, founderTitle = ?, founderBio = ?, founderPhotoUrl = ?, undergradInfo = ?, mastersInfo = ?, phdInfo = ?, scholarshipsInfo = ?, caretakingInfo = ?
+      `UPDATE site_content SET orgName = ?, tagline = ?, mission = ?, vision = ?, contactEmail = ?, contactPhone = ?, address = ?, donateInfo = ?, logoUrl = ?, heroImageUrl = ?, founderName = ?, founderTitle = ?, founderBio = ?, founderPhotoUrl = ?, undergradInfo = ?, mastersInfo = ?, phdInfo = ?, scholarshipsInfo = ?, workVisaInfo = ?, caretakingInfo = ?
        WHERE id = 1`
     )
     .run(
@@ -375,6 +398,7 @@ export function updateSiteContent(input: Omit<SiteContentRecord, "id">) {
       input.mastersInfo,
       input.phdInfo,
       input.scholarshipsInfo,
+      input.workVisaInfo,
       input.caretakingInfo
     );
 }

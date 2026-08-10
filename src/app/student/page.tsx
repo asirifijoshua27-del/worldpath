@@ -51,13 +51,40 @@ export default async function StudentHomePage() {
           <p className="font-display text-xl text-gold-deep">{statusLabel}</p>
         </div>
         <div className="border border-line rounded-xl p-5">
-          <p className="text-xs uppercase tracking-wide text-ink/50 mb-1">Targeting</p>
-          <p className="capitalize">{student.targetLevel}</p>
-          <p className="text-sm text-ink/70">{targetCountries.join(", ")}</p>
+          {student.applicationTrack === "work_visa" ? (
+            <>
+              <p className="text-xs uppercase tracking-wide text-ink/50 mb-1">Profession</p>
+              <p>{student.profession}</p>
+              <p className="text-sm text-ink/70">{targetCountries.join(", ")}</p>
+            </>
+          ) : (
+            <>
+              <p className="text-xs uppercase tracking-wide text-ink/50 mb-1">Targeting</p>
+              <p className="capitalize">{student.targetLevel}</p>
+              <p className="text-sm text-ink/70">{targetCountries.join(", ")}</p>
+            </>
+          )}
         </div>
       </div>
 
-      {student.applicationType === "standard" && student.assignedStaffId && (
+      {student.applicationTrack === "work_visa" && (
+        <div className="grid sm:grid-cols-3 gap-6 mb-10">
+          <div className="border border-line rounded-xl p-5">
+            <p className="text-xs uppercase tracking-wide text-ink/50 mb-1">Current occupation</p>
+            <p className="text-sm">{student.currentOccupation || "Not specified"}</p>
+          </div>
+          <div className="border border-line rounded-xl p-5">
+            <p className="text-xs uppercase tracking-wide text-ink/50 mb-1">Experience</p>
+            <p className="text-sm">{student.yearsExperience}</p>
+          </div>
+          <div className="border border-line rounded-xl p-5">
+            <p className="text-xs uppercase tracking-wide text-ink/50 mb-1">Job offer</p>
+            <p className="text-sm">{student.hasJobOffer ? "Yes" : "Not yet"}</p>
+          </div>
+        </div>
+      )}
+
+      {student.applicationTrack === "university" && student.applicationType === "standard" && student.assignedStaffId && (
         <div className="border border-gold-deep/30 bg-gold/5 rounded-xl p-5 mb-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <p className="font-medium mb-1">Need your application form?</p>
