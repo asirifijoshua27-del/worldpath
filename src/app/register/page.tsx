@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useRef, startTransition } from "react";
+import { useActionState, useRef, startTransition, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { registerAction, type FormState } from "@/app/actions/auth";
 import { TARGET_LEVELS, TARGET_COUNTRIES, CURRENT_EDUCATION_LEVELS } from "@/types";
@@ -9,12 +10,15 @@ import { ArrowRight } from "@/components/arrow-right";
 
 const initialState: FormState = {};
 
-export default function RegisterPage() {
+function RegisterForm() {
   const [state, formAction, pending] = useActionState(registerAction, initialState);
   const formRef = useRef<HTMLFormElement>(null);
+  const searchParams = useSearchParams();
+  const levelParam = searchParams.get("level");
+  const defaultLevel = TARGET_LEVELS.some((l) => l.value === levelParam) ? levelParam! : "undergrad";
 
   // React resets uncontrolled form fields the moment a <form action={...}>
-  // submits Ã¢â‚¬â€ including on a failed submission. On a form this long,
+  // submits - including on a failed submission. On a form this long,
   // that means a student who forgets one field (like the photo) would
   // see everything they typed disappear. Submitting manually like this,
   // instead of wiring `action` directly to the form, keeps their answers
@@ -59,7 +63,7 @@ export default function RegisterPage() {
           </Field>
 
           <Field label="What are you applying for?">
-            <select name="targetLevel" className="input" defaultValue="undergrad">
+            <select name="targetLevel" className="input" defaultValue={defaultLevel}>
               {TARGET_LEVELS.map((l) => (
                 <option key={l.value} value={l.value}>
                   {l.label}
@@ -122,6 +126,14 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
       <span className="block text-sm font-medium mb-1.5">{label}</span>
       {children}
     </label>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={null}>
+      <RegisterForm />
+    </Suspense>
   );
 }
 
