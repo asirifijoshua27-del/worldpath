@@ -263,3 +263,36 @@ export interface JobRecord {
   createdAt: string;
   updatedAt: string;
 }
+
+export type JobApplicationStatus =
+  | "saved"
+  | "preparing"
+  | "applied"
+  | "employer_review"
+  | "interview"
+  | "offer_received"
+  | "accepted"
+  | "not_selected"
+  | "withdrawn";
+
+export const JOB_APPLICATION_STATUSES: { value: JobApplicationStatus; label: string }[] = [
+  { value: "saved", label: "Saved" },
+  { value: "preparing", label: "Preparing" },
+  { value: "applied", label: "Applied" },
+  { value: "employer_review", label: "Employer Review" },
+  { value: "interview", label: "Interview" },
+  { value: "offer_received", label: "Offer Received" },
+  { value: "accepted", label: "Accepted" },
+  { value: "not_selected", label: "Not Selected" },
+  { value: "withdrawn", label: "Withdrawn" },
+];
+
+export interface JobApplicationRecord {
+  id: string;
+  studentId: string;
+  jobId: string;
+  status: JobApplicationStatus;
+  notes: string;
+  createdAt: string;
+  updatedAt: string;
+}

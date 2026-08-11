@@ -17,6 +17,8 @@ import type {
   NotificationType,
   JobRecord,
   JobVerificationStatus,
+  JobApplicationRecord,
+  JobApplicationStatus,
 } from "@/types";
 
 const DEFAULT_CHECKLIST: DocumentItem[] = [
@@ -67,8 +69,8 @@ export function countAdmins(): number {
 /**
  * Deletes a user account and whatever it owns: for staff, their public
  * profile (and unassigns any students); for students, their application
- * record. Messages the account authored are kept for the record ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â see
- * listNotesForStudent ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â rather than deleted.
+ * record. Messages the account authored are kept for the record ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â see
+ * listNotesForStudent ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â rather than deleted.
  */
 export function deleteUserAccount(userId: string): { staffPhotoUrl: string | null; studentPhotoUrl: string | null; documentUrls: string[] } {
   const database = db();
@@ -809,4 +811,89 @@ export function listPublishedJobs(): JobRecord[] {
   return db()
     .prepare("SELECT * FROM jobs WHERE published = 1 AND verificationStatus != 'expired' ORDER BY createdAt DESC")
     .all() as unknown as JobRecord[];
+}
+
+// ---------- Job applications ----------
+
+/** Saves a job for a student (status "saved") if not already tracked. Safe to call repeatedly. */
+export function saveJobForStudent(studentId: string, jobId: string): JobApplicationRecord {
+  const existing = getJobApplication(studentId, jobId);
+  if (existing) return existing;
+  const id = newId();
+  const now = nowIso();
+  db()
+    .prepare(
+      `INSERT INTO job_applications (id, studentId, jobId, status, notes, createdAt, updatedAt)
+       VALUES (?, ?, ?, 'saved', '', ?, ?)`
+    )
+    .run(id, studentId, jobId, now, now);
+  return getJobApplicationById(id)!;
+}
+
+export function getJobApplication(studentId: string, jobId: string): JobApplicationRecord | undefined {
+  return db()
+    .prepare("SELECT * FROM job_applications WHERE studentId = ? AND jobId = ?")
+    .get(studentId, jobId) as JobApplicationRecord | undefined;
+}
+
+export function getJobApplicationById(id: string): JobApplicationRecord | undefined {
+  return db().prepare("SELECT * FROM job_applications WHERE id = ?").get(id) as JobApplicationRecord | undefined;
+}
+
+export function updateJobApplicationStatus(id: string, status: JobApplicationStatus) {
+  db().prepare("UPDATE job_applications SET status = ?, updatedAt = ? WHERE id = ?").run(status, nowIso(), id);
+}
+
+export function withdrawJobApplication(id: string) {
+  db().prepare("UPDATE job_applications SET status = 'withdrawn', updatedAt = ? WHERE id = ?").run(nowIso(), id);
+}
+
+export function deleteJobApplication(id: string) {
+  db().prepare("DELETE FROM job_applications WHERE id = ?").run(id);
+}
+
+/** A student's tracked applications, newest first, with the job details joined in. */
+export function listJobApplicationsForStudent(studentId: string): (JobApplicationRecord & { job: JobRecord })[] {
+  const rows = db()
+    .prepare(
+      `SELECT ja.*, 
+        j.id as job_id, j.title as job_title, j.employer as job_employer, j.country as job_country,
+        j.city as job_city, j.industry as job_industry, j.employmentType as job_employmentType,
+        j.applicationUrl as job_applicationUrl, j.verificationStatus as job_verificationStatus
+       FROM job_applications ja
+       JOIN jobs j ON j.id = ja.jobId
+       WHERE ja.studentId = ?
+       ORDER BY ja.updatedAt DESC`
+    )
+    .all(studentId) as unknown as Record<string, unknown>[];
+
+  return rows.map((r) => ({
+    id: r.id as string,
+    studentId: r.studentId as string,
+    jobId: r.jobId as string,
+    status: r.status as JobApplicationStatus,
+    notes: r.notes as string,
+    createdAt: r.createdAt as string,
+    updatedAt: r.updatedAt as string,
+    job: {
+      id: r.job_id as string,
+      title: r.job_title as string,
+      employer: r.job_employer as string,
+      country: r.job_country as string,
+      city: r.job_city as string,
+      industry: r.job_industry as string,
+      employmentType: r.job_employmentType as string,
+      applicationUrl: r.job_applicationUrl as string,
+      verificationStatus: r.job_verificationStatus as JobVerificationStatus,
+    } as JobRecord,
+  }));
+}
+
+export function countJobApplicationsByStatus(studentId: string): Record<string, number> {
+  const rows = db()
+    .prepare("SELECT status, COUNT(*) as count FROM job_applications WHERE studentId = ? GROUP BY status")
+    .all(studentId) as unknown as { status: string; count: number }[];
+  const counts: Record<string, number> = {};
+  for (const row of rows) counts[row.status] = row.count;
+  return counts;
 }

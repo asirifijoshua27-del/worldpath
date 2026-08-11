@@ -1,5 +1,5 @@
 import { getSession } from "@/lib/auth";
-import { getStudentByUserId, getStaffById, listNotesForStudent } from "@/lib/repo";
+import { getStudentByUserId, getStaffById, listNotesForStudent, listPublishedJobs, listJobApplicationsForStudent, countJobApplicationsByStatus } from "@/lib/repo";
 import { APPLICATION_STATUSES } from "@/types";
 import type { DocumentItem } from "@/types";
 import { DocumentUploadRow } from "./document-upload-row";
@@ -7,6 +7,8 @@ import { MessageThread } from "@/components/message-thread";
 import { MessageForm } from "@/components/message-form";
 import { studentAddNoteAction } from "@/app/actions/student";
 import { RequestFormButton } from "./request-form-button";
+import { JobBrowseList } from "./job-browse-list";
+import { MyApplicationsList } from "./my-applications-list";
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +26,11 @@ export default async function StudentHomePage() {
   const targetCountries = JSON.parse(student.targetCountries) as string[];
   const statusLabel = APPLICATION_STATUSES.find((s) => s.value === student.status)?.label ?? student.status;
   const completedDocs = documents.filter((d) => d.done).length;
+  const myApplications = student.applicationTrack === "work_visa" ? listJobApplicationsForStudent(student.id) : [];
+  const applicationCounts = student.applicationTrack === "work_visa" ? countJobApplicationsByStatus(student.id) : {};
+  const savedJobIds = new Set(myApplications.map((a) => a.jobId));
+  const availableJobs =
+    student.applicationTrack === "work_visa" ? listPublishedJobs().filter((j) => !savedJobIds.has(j.id)) : [];
 
   return (
     <div>
@@ -82,6 +89,28 @@ export default async function StudentHomePage() {
             <p className="text-sm">{student.hasJobOffer ? "Yes" : "Not yet"}</p>
           </div>
         </div>
+      )}
+
+      {student.applicationTrack === "work_visa" && (
+        <>
+          <div className="mb-10">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-display text-xl">My Applications</h2>
+              <span className="text-sm text-ink/50">
+                {Object.entries(applicationCounts)
+                  .filter(([status]) => status !== "withdrawn")
+                  .map(([status, count]) => `${status.replace(/_/g, " ")}: ${count}`)
+                  .join(" Â· ") || "None yet"}
+              </span>
+            </div>
+            <MyApplicationsList applications={myApplications} />
+          </div>
+
+          <div className="mb-10">
+            <h2 className="font-display text-xl mb-4">Browse Opportunities</h2>
+            <JobBrowseList jobs={availableJobs} savedJobIds={myApplications.map((a) => a.jobId)} />
+          </div>
+        </>
       )}
 
       {student.applicationTrack === "university" && student.applicationType === "standard" && student.assignedStaffId && (

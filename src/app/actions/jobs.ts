@@ -3,9 +3,22 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
-import { createJob, updateJob, deleteJob, getJobById } from "@/lib/repo";
+import {
+  createJob,
+  updateJob,
+  deleteJob,
+  getJobById,
+  getStudentByUserId,
+  saveJobForStudent,
+  getJobApplicationById,
+  updateJobApplicationStatus,
+  withdrawJobApplication,
+  getStaffByUserId,
+  getStudentById,
+} from "@/lib/repo";
+import { notifyUser } from "@/lib/notify";
 import { jobSchema } from "@/lib/validators";
-import type { JobVerificationStatus } from "@/types";
+import type { JobVerificationStatus, JobApplicationStatus } from "@/types";
 
 export type FormState = { error?: string; success?: string };
 
@@ -88,4 +101,82 @@ export async function toggleJobPublishedAction(formData: FormData) {
   updateJob(id, { published: job.published ? 0 : 1 });
   revalidatePath("/admin/jobs");
   revalidatePath("/work-visa");
+}
+
+// ---------- Student-facing: saving jobs and tracking applications ----------
+
+async function requireWorkVisaStudent() {
+  const session = await getSession();
+  if (!session || session.role !== "student") {
+    throw new Error("Not authorized");
+  }
+  const student = getStudentByUserId(session.userId);
+  if (!student) {
+    throw new Error("No application record found");
+  }
+  return { session, student };
+}
+
+export async function saveJobAction(jobId: string): Promise<void> {
+  const { student } = await requireWorkVisaStudent();
+  saveJobForStudent(student.id, jobId);
+  revalidatePath("/student");
+}
+
+export async function updateMyApplicationStatusAction(applicationId: string, formData: FormData): Promise<void> {
+  const { student } = await requireWorkVisaStudent();
+  const application = getJobApplicationById(applicationId);
+  if (!application || application.studentId !== student.id) {
+    throw new Error("Not authorized for this application");
+  }
+  const status = String(formData.get("status") || "") as JobApplicationStatus;
+  updateJobApplicationStatus(applicationId, status);
+  revalidatePath("/student");
+}
+
+export async function withdrawMyApplicationAction(applicationId: string): Promise<void> {
+  const { student } = await requireWorkVisaStudent();
+  const application = getJobApplicationById(applicationId);
+  if (!application || application.studentId !== student.id) {
+    throw new Error("Not authorized for this application");
+  }
+  withdrawJobApplication(applicationId);
+  revalidatePath("/student");
+}
+
+// ---------- Staff/admin: updating an applicant's job application status ----------
+
+export async function staffUpdateApplicationStatusAction(applicationId: string, formData: FormData): Promise<void> {
+  const session = await getSession();
+  if (!session || (session.role !== "staff" && session.role !== "admin")) {
+    throw new Error("Not authorized");
+  }
+  const application = getJobApplicationById(applicationId);
+  if (!application) return;
+
+  if (session.role === "staff") {
+    const staff = getStaffByUserId(session.userId);
+    const student = getStudentById(application.studentId);
+    if (!staff || !student || student.assignedStaffId !== staff.id) {
+      throw new Error("Not authorized for this student");
+    }
+  }
+
+  const status = String(formData.get("status") || "") as JobApplicationStatus;
+  updateJobApplicationStatus(applicationId, status);
+
+  const student = getStudentById(application.studentId);
+  const job = getJobById(application.jobId);
+  if (student && job) {
+    await notifyUser({
+      userId: student.userId,
+      type: "status_changed",
+      title: `Application update: ${job.title}`,
+      body: `Your application to ${job.employer} is now "${status.replace(/_/g, " ")}".`,
+      link: "/student",
+    });
+  }
+
+  revalidatePath(`/staff/students/${application.studentId}`);
+  revalidatePath(`/admin/students/${application.studentId}`);
 }

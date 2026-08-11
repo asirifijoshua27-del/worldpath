@@ -1,11 +1,12 @@
 import { notFound } from "next/navigation";
 import { getSession } from "@/lib/auth";
-import { getStaffByUserId, getStudentById, getUserById, listNotesForStudent } from "@/lib/repo";
+import { getStaffByUserId, getStudentById, getUserById, listNotesForStudent, listJobApplicationsForStudent } from "@/lib/repo";
 import { StatusSelect } from "./status-select";
 import { DocumentChecklist } from "./document-checklist";
 import { MessageThread } from "@/components/message-thread";
 import { MessageForm } from "@/components/message-form";
 import { PhotoLightbox } from "@/components/photo-lightbox";
+import { ApplicationsReview } from "@/components/applications-review";
 import { staffAddNoteAction } from "@/app/actions/staff";
 import type { DocumentItem } from "@/types";
 
@@ -23,6 +24,7 @@ export default async function StaffStudentPage({ params }: { params: Promise<{ i
   const notes = listNotesForStudent(student.id);
   const documents = JSON.parse(student.documents) as DocumentItem[];
   const targetCountries = JSON.parse(student.targetCountries) as string[];
+  const jobApplications = student.applicationTrack === "work_visa" ? listJobApplicationsForStudent(student.id) : [];
   const addNote = staffAddNoteAction.bind(null, student.id);
 
   return (
@@ -75,6 +77,13 @@ export default async function StaffStudentPage({ params }: { params: Promise<{ i
         <h2 className="font-display text-xl mb-4">Document checklist</h2>
         <DocumentChecklist studentId={student.id} documents={documents} />
       </div>
+
+      {student.applicationTrack === "work_visa" && (
+        <div className="mb-10">
+          <h2 className="font-display text-xl mb-4">Job Applications</h2>
+          <ApplicationsReview applications={jobApplications} />
+        </div>
+      )}
 
       <div>
         <h2 className="font-display text-xl mb-4">Messages</h2>

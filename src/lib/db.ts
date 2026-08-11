@@ -140,6 +140,17 @@ function migrate(db: DatabaseSync) {
       updatedAt TEXT NOT NULL
     );
 
+    CREATE TABLE IF NOT EXISTS job_applications (
+      id TEXT PRIMARY KEY,
+      studentId TEXT NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+      jobId TEXT NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
+      status TEXT NOT NULL DEFAULT 'saved',
+      notes TEXT NOT NULL DEFAULT '',
+      createdAt TEXT NOT NULL,
+      updatedAt TEXT NOT NULL,
+      UNIQUE(studentId, jobId)
+    );
+
     CREATE TABLE IF NOT EXISTS blog_posts (
       id TEXT PRIMARY KEY,
       slug TEXT UNIQUE NOT NULL,
@@ -214,7 +225,7 @@ function migrate(db: DatabaseSync) {
     try {
       db.exec(sql);
     } catch {
-      // Column already exists ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â fine.
+      // Column already exists ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â fine.
     }
   }
 }

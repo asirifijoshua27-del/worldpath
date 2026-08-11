@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getStudentById, getUserById, listNotesForStudent, listStaff } from "@/lib/repo";
+import { getStudentById, getUserById, listNotesForStudent, listStaff, listJobApplicationsForStudent } from "@/lib/repo";
 import { APPLICATION_STATUSES, CURRENT_EDUCATION_LEVELS } from "@/types";
 import type { DocumentItem } from "@/types";
 import { PhotoLightbox } from "@/components/photo-lightbox";
@@ -8,6 +8,7 @@ import { EmailStudentForm } from "./email-student-form";
 import { DeleteButton } from "@/components/delete-button";
 import { deleteUserAction } from "@/app/actions/admin";
 import { CheckIcon } from "@/components/check-icon";
+import { ApplicationsReview } from "@/components/applications-review";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +23,7 @@ export default async function AdminStudentDetailPage({ params }: { params: Promi
   const notes = listNotesForStudent(student.id);
   const documents = JSON.parse(student.documents) as DocumentItem[];
   const targetCountries = JSON.parse(student.targetCountries) as string[];
+  const jobApplications = student.applicationTrack === "work_visa" ? listJobApplicationsForStudent(student.id) : [];
   const statusLabel = APPLICATION_STATUSES.find((s) => s.value === student.status)?.label ?? student.status;
   const eduLabel =
     student.currentEducationLevel === "shs_current"
@@ -103,6 +105,13 @@ export default async function AdminStudentDetailPage({ params }: { params: Promi
           ))}
         </ul>
       </div>
+
+      {student.applicationTrack === "work_visa" && (
+        <div className="mb-10">
+          <h2 className="font-display text-xl mb-4">Job Applications</h2>
+          <ApplicationsReview applications={jobApplications} />
+        </div>
+      )}
 
       <div className="mb-10">
         <h2 className="font-display text-xl mb-4">Message history</h2>
