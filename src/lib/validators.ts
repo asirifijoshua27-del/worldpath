@@ -62,6 +62,7 @@ export const siteContentSchema = z.object({
   phdInfo: z.string().optional().default(""),
   scholarshipsInfo: z.string().optional().default(""),
   workVisaInfo: z.string().optional().default(""),
+  workVisaHeroImageUrl: z.string().optional().default(""),
   caretakingInfo: z.string().optional().default(""),
 });
 

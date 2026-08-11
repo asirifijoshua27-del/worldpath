@@ -141,6 +141,7 @@ export interface SiteContentRecord {
   phdInfo: string;
   scholarshipsInfo: string;
   workVisaInfo: string;
+  workVisaHeroImageUrl: string | null;
   caretakingInfo: string;
 }
 

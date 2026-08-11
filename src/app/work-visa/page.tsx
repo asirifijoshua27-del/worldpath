@@ -105,7 +105,11 @@ export default function WorkVisaPage() {
       <SiteHeader orgName={content.orgName} logoUrl={content.logoUrl} />
       <main className="flex-1">
         {/* Hero */}
-        <section className="relative bg-navy text-paper overflow-hidden">
+        <section
+          className="relative bg-navy text-paper overflow-hidden bg-cover bg-center"
+          style={content.workVisaHeroImageUrl ? { backgroundImage: `url(${content.workVisaHeroImageUrl})` } : undefined}
+        >
+          {content.workVisaHeroImageUrl && <div className="absolute inset-0 bg-navy/75" />}
           <div
             className="absolute inset-0 opacity-40"
             style={{ background: "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(15,110,140,0.55), transparent 60%)" }}

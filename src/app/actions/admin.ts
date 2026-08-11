@@ -89,6 +89,20 @@ export async function updateSiteContentAction(_prev: FormState, formData: FormDa
     if (existingFounderPhotoUrl) await deleteUploadedImage(existingFounderPhotoUrl);
   }
 
+  const existingWorkVisaHeroImageUrl = String(formData.get("existingWorkVisaHeroImageUrl") || "");
+  const workVisaHeroFile = formData.get("workVisaHero");
+
+  let workVisaHeroImageUrl = existingWorkVisaHeroImageUrl;
+  if (workVisaHeroFile instanceof File && workVisaHeroFile.size > 0) {
+    try {
+      workVisaHeroImageUrl = await saveUploadedImage(workVisaHeroFile);
+    } catch (e) {
+      if (e instanceof UploadError) return { error: e.message };
+      throw e;
+    }
+    if (existingWorkVisaHeroImageUrl) await deleteUploadedImage(existingWorkVisaHeroImageUrl);
+  }
+
   const parsed = siteContentSchema.safeParse({
     orgName: String(formData.get("orgName") || ""),
     tagline: String(formData.get("tagline") || ""),
@@ -110,6 +124,7 @@ export async function updateSiteContentAction(_prev: FormState, formData: FormDa
     logoUrl,
     heroImageUrl,
     founderPhotoUrl,
+    workVisaHeroImageUrl,
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message || "Please check the form." };

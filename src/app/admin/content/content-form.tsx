@@ -27,6 +27,7 @@ export function ContentForm({
     phdInfo: string;
     scholarshipsInfo: string;
     workVisaInfo: string;
+    workVisaHeroImageUrl: string | null;
     caretakingInfo: string;
   };
 }) {
@@ -53,6 +54,22 @@ export function ContentForm({
           <p className="text-xs text-ink/50 mt-1.5">
             A wide photo works best. It's shown with a dark overlay so the headline text stays readable.
             Leave empty to keep the plain navy background.
+          </p>
+        </div>
+
+        <div>
+          <span className="block text-sm font-medium mb-1.5">
+            Work Visa page hero background (the dark banner on the International Careers page)
+          </span>
+          <PhotoUploadField
+            existingUrl={content.workVisaHeroImageUrl}
+            name="workVisaHero"
+            hiddenFieldName="existingWorkVisaHeroImageUrl"
+            shape="rect"
+          />
+          <p className="text-xs text-ink/50 mt-1.5">
+            Shown on the worldpathgroup.org/work-visa page specifically, separate from the homepage
+            background above. Leave empty to keep the plain navy background.
           </p>
         </div>
       </Section>
