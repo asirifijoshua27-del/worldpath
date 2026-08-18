@@ -100,7 +100,8 @@ export async function sendAdminEmail(
   to: string,
   subject: string,
   body: string,
-  attachment?: { filename: string; content: Buffer } | null
+  attachment?: { filename: string; content: Buffer } | null,
+  replyTo?: string
 ) {
   const apiKey = process.env.RESEND_API_KEY;
   const fromEmail = process.env.RESEND_FROM_EMAIL || "WorldPath Group <onboarding@resend.dev>";
@@ -120,6 +121,7 @@ export async function sendAdminEmail(
       html: adminEmailHtml(body),
       text: body,
       attachments: attachment ? [{ filename: attachment.filename, content: attachment.content }] : undefined,
+      replyTo: replyTo || undefined,
     });
     if (error) {
       throw new EmailSendError(error.message || "Resend rejected this email.");
