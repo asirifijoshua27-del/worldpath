@@ -62,6 +62,7 @@ export async function registerAction(_prev: FormState, formData: FormData): Prom
   const raw = {
     name: String(formData.get("name") || ""),
     email: String(formData.get("email") || ""),
+    phone: String(formData.get("phone") || ""),
     targetLevel: String(formData.get("targetLevel") || "undergrad"),
     targetCountries: formData.getAll("targetCountries").map(String),
     scholarshipInterest: formData.get("scholarshipInterest") === "on",
@@ -99,6 +100,7 @@ export async function registerAction(_prev: FormState, formData: FormData): Prom
     currentEducationLevel: parsed.data.currentEducationLevel,
     applicationType: "standard",
     photoUrl,
+    phone: parsed.data.phone,
   });
 
   await notifyAllAdmins({
@@ -115,6 +117,7 @@ export async function registerFreeAction(_prev: FormState, formData: FormData): 
   const raw = {
     name: String(formData.get("name") || ""),
     email: String(formData.get("email") || ""),
+    phone: String(formData.get("phone") || ""),
     schoolName: String(formData.get("schoolName") || ""),
     targetCountries: formData.getAll("targetCountries").map(String),
   };
@@ -151,6 +154,7 @@ export async function registerFreeAction(_prev: FormState, formData: FormData): 
     schoolName: parsed.data.schoolName,
     applicationType: "free_shs",
     photoUrl,
+    phone: parsed.data.phone,
   });
 
   await notifyAllAdmins({
@@ -167,6 +171,7 @@ export async function registerWorkVisaAction(_prev: FormState, formData: FormDat
   const raw = {
     name: String(formData.get("name") || ""),
     email: String(formData.get("email") || ""),
+    phone: String(formData.get("phone") || ""),
     profession: String(formData.get("profession") || ""),
     currentOccupation: String(formData.get("currentOccupation") || ""),
     yearsExperience: String(formData.get("yearsExperience") || ""),
@@ -209,6 +214,7 @@ export async function registerWorkVisaAction(_prev: FormState, formData: FormDat
     yearsExperience: parsed.data.yearsExperience,
     hasJobOffer: parsed.data.hasJobOffer,
     photoUrl,
+    phone: parsed.data.phone,
   });
 
   await notifyAllAdmins({

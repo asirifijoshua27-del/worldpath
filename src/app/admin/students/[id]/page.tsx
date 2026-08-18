@@ -79,6 +79,7 @@ export default async function AdminStudentDetailPage({ params }: { params: Promi
         )}
         <InfoCard label="Assigned counselor" value={assignedStaff?.name || "Unassigned"} />
         <InfoCard label="Applied" value={new Date(student.createdAt).toLocaleDateString()} />
+        <InfoCard label="Phone" value={student.phone || "Not provided"} />
       </div>
 
       <div className="mb-10">

@@ -46,6 +46,10 @@ export default function WorkVisaRegisterPage() {
             <input name="email" type="email" required className="input" placeholder="you@example.com" />
           </Field>
 
+          <Field label="Phone number">
+            <input name="phone" type="tel" required className="input" placeholder="e.g. 024 000 0000" />
+          </Field>
+
           <Field label="Profession / field">
             <input name="profession" required className="input" placeholder="e.g. Nursing, Software Engineering, Hospitality" />
           </Field>

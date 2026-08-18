@@ -7,10 +7,12 @@ const LINKS = [
   { href: "/admin/staff", label: "Staff" },
   { href: "/admin/board", label: "Board" },
   { href: "/admin/students", label: "Students" },
+  { href: "/admin/work-visa-applicants", label: "Work visa applicants" },
   { href: "/admin/jobs", label: "Job listings" },
   { href: "/admin/blog", label: "Blog" },
   { href: "/admin/impact", label: "Impact stories" },
   { href: "/admin/leads", label: "Leads" },
+  { href: "/admin/broadcast", label: "Message a group" },
   { href: "/admin/users", label: "Accounts" },
 ];
 

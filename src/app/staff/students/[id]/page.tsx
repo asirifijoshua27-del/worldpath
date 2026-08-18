@@ -45,6 +45,7 @@ export default async function StaffStudentPage({ params }: { params: Promise<{ i
           </p>
           <h1 className="font-display text-3xl mb-1">{user?.name}</h1>
           <p className="text-ink/60">{user?.email}</p>
+          {student.phone && <p className="text-ink/60">{student.phone}</p>}
         </div>
       </div>
 

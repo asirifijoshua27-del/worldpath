@@ -3,6 +3,7 @@ import { z } from "zod";
 export const registerSchema = z.object({
   name: z.string().min(2, "Enter your full name"),
   email: z.string().email("Enter a valid email address"),
+  phone: z.string().min(9, "Enter a valid phone number"),
   targetLevel: z.enum(["undergrad", "masters", "phd"]),
   targetCountries: z.array(z.string()).min(1, "Choose at least one destination"),
   scholarshipInterest: z.boolean(),
@@ -12,6 +13,7 @@ export const registerSchema = z.object({
 export const freeRegisterSchema = z.object({
   name: z.string().min(2, "Enter your full name"),
   email: z.string().email("Enter a valid email address"),
+  phone: z.string().min(9, "Enter a valid phone number"),
   schoolName: z.string().min(2, "Enter your school's name"),
   targetCountries: z.array(z.string()).min(1, "Choose at least one destination"),
 });
@@ -19,6 +21,7 @@ export const freeRegisterSchema = z.object({
 export const workVisaRegisterSchema = z.object({
   name: z.string().min(2, "Enter your full name"),
   email: z.string().email("Enter a valid email address"),
+  phone: z.string().min(9, "Enter a valid phone number"),
   profession: z.string().min(2, "Enter your profession or field"),
   currentOccupation: z.string().optional().default(""),
   yearsExperience: z.string().min(1, "Select your years of experience"),

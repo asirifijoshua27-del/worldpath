@@ -1,10 +1,10 @@
 import { listStudentsByTrack, listStaff, getUserById } from "@/lib/repo";
-import { StudentRow } from "./student-row";
+import { StudentRow } from "../students/student-row";
 
 export const dynamic = "force-dynamic";
 
-export default function AdminStudentsPage() {
-  const students = listStudentsByTrack("university");
+export default function AdminWorkVisaApplicantsPage() {
+  const students = listStudentsByTrack("work_visa");
   const staff = listStaff();
 
   const rows = students.map((s) => {
@@ -28,11 +28,11 @@ export default function AdminStudentsPage() {
 
   return (
     <div>
-      <h1 className="font-display text-3xl mb-2">Students</h1>
+      <h1 className="font-display text-3xl mb-2">Work Visa Applicants</h1>
       <p className="text-ink/60 mb-8">
-        University and scholarship applicants only.{" "}
-        <a href="/admin/work-visa-applicants" className="text-teal hover:underline">
-          Work visa applicants are managed separately &rarr;
+        International Careers & Work Visa Support applicants, separate from university/scholarship students.{" "}
+        <a href="/admin/students" className="text-teal hover:underline">
+          View students &rarr;
         </a>
       </p>
 
@@ -42,9 +42,9 @@ export default function AdminStudentsPage() {
             <tr className="text-left text-xs uppercase tracking-wide text-ink/50 border-b border-line">
               <th className="py-3 px-4 font-medium"></th>
               <th className="py-3 px-4 font-medium">Code</th>
-              <th className="py-3 px-4 font-medium">Student</th>
+              <th className="py-3 px-4 font-medium">Applicant</th>
               <th className="py-3 px-4 font-medium">Program</th>
-              <th className="py-3 px-4 font-medium">Level</th>
+              <th className="py-3 px-4 font-medium">Profession</th>
               <th className="py-3 px-4 font-medium">Status</th>
               <th className="py-3 px-4 font-medium">Assigned staff</th>
               <th className="py-3 px-4 font-medium"></th>
@@ -54,7 +54,7 @@ export default function AdminStudentsPage() {
             {rows.length === 0 && (
               <tr>
                 <td colSpan={8} className="py-6 px-4 text-ink/50 italic">
-                  No students have registered yet.
+                  No work visa applicants have registered yet.
                 </td>
               </tr>
             )}
@@ -67,4 +67,3 @@ export default function AdminStudentsPage() {
     </div>
   );
 }
-

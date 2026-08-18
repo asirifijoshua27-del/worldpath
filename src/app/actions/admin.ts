@@ -24,6 +24,9 @@ import {
   getUserById,
   countAdmins,
   deleteUserAccount,
+  listStudentsByTrack,
+  listStudents,
+  createNotification,
 } from "@/lib/repo";
 import { notifyUser } from "@/lib/notify";
 import {
@@ -414,3 +417,63 @@ export async function deleteUserAction(userId: string): Promise<void> {
   revalidatePath("/about");
 }
 
+
+export async function broadcastMessageAction(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireAdmin();
+
+  const group = String(formData.get("group") || "all");
+  const subject = String(formData.get("subject") || "");
+  const body = String(formData.get("body") || "");
+
+  if (!subject.trim() || !body.trim()) {
+    return { error: "Add both a subject and a message." };
+  }
+
+  const attachment = await readEmailAttachment(formData);
+  if (attachment && "error" in attachment) {
+    return { error: attachment.error };
+  }
+
+  let recipients;
+  if (group === "university") {
+    recipients = listStudentsByTrack("university");
+  } else if (group === "work_visa") {
+    recipients = listStudentsByTrack("work_visa");
+  } else {
+    recipients = listStudents();
+  }
+
+  if (recipients.length === 0) {
+    return { error: "No one in that group yet - nothing was sent." };
+  }
+
+  let sent = 0;
+  let emailed = 0;
+  for (const student of recipients) {
+    const user = getUserById(student.userId);
+    if (!user) continue;
+
+    // The in-app notification always gets created, regardless of whether the
+    // email send below succeeds - Resend being unconfigured or rate-limited
+    // shouldn't mean the recipient hears nothing at all.
+    createNotification({
+      userId: user.id,
+      type: "message",
+      title: subject,
+      body: body.slice(0, 120),
+      link: "/student",
+    });
+    sent++;
+
+    try {
+      await sendAdminEmail(user.email, subject, body, attachment);
+      emailed++;
+    } catch {
+      // Email is best-effort here; the notification above already landed.
+    }
+  }
+
+  return {
+    success: `Notified ${sent} of ${recipients.length} recipient${recipients.length === 1 ? "" : "s"} (emailed ${emailed}).`,
+  };
+}

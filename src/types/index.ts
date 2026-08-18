@@ -107,6 +107,7 @@ export interface StudentRecord {
   currentOccupation: string;
   yearsExperience: string;
   hasJobOffer: number;
+  phone: string;
   createdAt: string;
   updatedAt: string;
 }

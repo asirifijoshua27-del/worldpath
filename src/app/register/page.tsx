@@ -62,6 +62,10 @@ function RegisterForm() {
             <input name="email" type="email" required className="input" placeholder="you@example.com" />
           </Field>
 
+          <Field label="Phone number">
+            <input name="phone" type="tel" required className="input" placeholder="e.g. 024 000 0000" />
+          </Field>
+
           <Field label="What are you applying for?">
             <select name="targetLevel" className="input" defaultValue={defaultLevel}>
               {TARGET_LEVELS.map((l) => (
